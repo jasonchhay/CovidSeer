@@ -2,23 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="13b84195-8492-48ce-94c5-213a5c81de51" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/seer/static/css/base.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/seer/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/coronaseer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/coronaseer.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap-grid.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap-grid.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap-grid.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap-grid.min.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap-reboot.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap-reboot.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap-reboot.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap-reboot.min.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/bootstrap.min.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/js/bootstrap.bundle.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/js/bootstrap.bundle.js.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/js/bootstrap.bundle.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/js/bootstrap.bundle.min.js.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/js/bootstrap.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/js/bootstrap.js.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/js/bootstrap.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/js/bootstrap.min.js.map" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/.ipynb_checkpoints/views-checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/.ipynb_checkpoints/views-checkpoint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/static/images/.ipynb_checkpoints/icon-checkpoint.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/img/.ipynb_checkpoints/icon-checkpoint.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/static/images/.ipynb_checkpoints/ist441ist-checkpoint.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/img/.ipynb_checkpoints/ist441ist-checkpoint.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/static/images/icon.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/img/icon.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/static/images/ist441ist.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/img/ist441ist.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/static/seer/ist441ist.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/seer/templates/seer/error.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/error.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/templates/seer/htmlresult.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/results.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/templates/seer/htmlresult.html.back" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/seer/templates/seer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/templates/standard.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/seer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,10 +64,13 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/seer/static" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.django.DjangoModulesConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/seer/static" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/coronaseer/.ipynb_checkpoints" />
@@ -119,7 +128,7 @@
       <workItem from="1584906916299" duration="320000" />
       <workItem from="1584907350399" duration="362000" />
       <workItem from="1584907715879" duration="992000" />
-      <workItem from="1584908727300" duration="2137000" />
+      <workItem from="1584908727300" duration="3065000" />
     </task>
     <servers />
   </component>
