@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><!--This page is automatically generated.  Do not edit!-->
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static "rsc/chem.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "rsc/result.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "rsc/reset.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "chemseer/css/expert.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "rsc/view.css" %}" />
+<link rel="stylesheet" type="text/css" href="http://visapi-gadgets.googlecode.com/svn/trunk/termcloud/tc.css"/>
+{% load staticfiles %}
+<script src="{% static "rsc/tc-mod.js" %}"></script>
+
+
+<style type="text/css">
+body{
+font-family:Arial, Helvetica, sans-serif;
+
+}
+*{margin:0;padding:0;}
+
+
+	
+	#searchword
+	{
+	text-align:left; margin-top:20px; display:none;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:16px;
+	color:#000;
+	}
+	.searchword
+	{
+	font-weight:bold;
+	color:#000000;
+	
+	}
+	#search_box
+	{
+	padding:4px; border:solid 1px #666666; width:300px; height:30px; font-size:18px;-moz-border-radius: 6px;-webkit-border-radius: 6px;
+	}
+	.search_button
+	{
+	 background-color: #4D90FE;border:#000000 solid 1px; padding-left:9px;padding-right:9px;padding-top:9px;padding-bottom:9px; color:#000; font-weight:bold; font-size:16px;-moz-border-radius: 6px;-webkit-border-radius: 6px;
+	}
+	
+
+</style>
+
+<script type="text/javascript">
+function populateSearchBox() {
+    myVar=document.getElementById("q_js").value; 
+    document.getElementById("search_box").value=myVar;
+}
+</script>
+
+</head>
+
+<body onLoad="populateSearchBox();">
+
+<div id='container' style="width: 960px; margin:0pt auto">
+<div id="search_container" style=" top: 7%; left: 2%; width: 90%; height: 10%;;padding-top:20px">
+
+<div style="float:left; padding-right:10px">
+{% load staticfiles %}
+<a  title="Lucidworks Fusion Interface" href="/">
+<img id=logo src="{% static "rsc/fusion-logo-resized-small.png" %}" alt="fusion logo"/>
+</a>
+</div>
+
+
+<form id="searchform"  method="post" action="../">
+  {% csrf_token %}
+  <input type="text" name="q" id="search_box" class="search_box"/>
+  <input type="hidden" name="qjs" id="q_js" value="{{ q }}" />
+  <input type="submit" value="Search" class="search_button" /><br />
+  <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Eg :</b> Authors, publications, CiteSeer ... </span>
+</form>
+
+</div>
+

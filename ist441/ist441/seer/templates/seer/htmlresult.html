@@ -1,0 +1,57 @@
+{% include "standard.html" %}
+
+<style>
+.img{
+max-width:25%;
+}
+
+em {
+
+
+background-color:#FFFF00;
+}
+</style>
+
+<div id="result_info">
+	Results
+	<strong>{{i}} - {{j}} </strong>
+	of
+	<strong>{{total}}</strong>
+	<div id="pager">
+	<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
+	</div>
+</div>
+
+{% for hit in results %}
+	{% autoescape off %}
+		<div class="result">
+			<h3>
+				<!--<div class="resultid"><b>ResultId</b><p>{{ hit.resultid }} </p></div>-->
+				<div class="url"><b><a href="http://{{hit.url}}">{{hit.title}}</a></b>
+                                <!--<p>{{ hit.c }} </p></div>-->
+                                <div class="description"><p>{{ hit.description }} </p></div>
+
+                                <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
+                                <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
+                               -->
+				</div>
+                        </h3>
+	{% endautoescape%}
+
+         </div>
+{% endfor%}
+
+<!--</div>-->
+
+         <div id="result_info">
+		Results
+		<strong>{{i}} - {{j}} </strong>
+		of
+		<strong>{{total}}</strong>
+		<div id="pager">
+		<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
+		</div>
+         </div>
+
+</body>
+</html>
