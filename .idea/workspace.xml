@@ -2,51 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="13b84195-8492-48ce-94c5-213a5c81de51" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/seer/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/seer/migrations/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/coronaseer/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/coronaseer/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/coronaseer/asgi.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/coronaseer/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/coronaseer/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/coronaseer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/coronaseer/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/coronaseer/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/coronaseer/wsgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/.idea/ist441.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/.idea/markdown-navigator/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/.ipynb_checkpoints/manage-checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/manage-checkpoint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/ist441/.ipynb_checkpoints/settings-checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/coronaseer/.ipynb_checkpoints/settings-checkpoint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/ist441/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/coronaseer/.ipynb_checkpoints/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/ist441/settings.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/ist441/static/icon.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/coronaseer/static/icon.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/ist441/static/ist441ist.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/coronaseer/static/ist441ist.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/ist441/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/ist441/wsgi.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/manage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/.ipynb_checkpoints/models-checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/.ipynb_checkpoints/models-checkpoint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/.ipynb_checkpoints/views-checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/.ipynb_checkpoints/views-checkpoint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/migrations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/.ipynb_checkpoints/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/static/images/.ipynb_checkpoints/icon-checkpoint.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/images/.ipynb_checkpoints/icon-checkpoint.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/static/images/.ipynb_checkpoints/ist441ist-checkpoint.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/images/.ipynb_checkpoints/ist441ist-checkpoint.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/static/images/icon.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/images/icon.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/static/images/ist441ist.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/images/ist441ist.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/static/seer/ist441ist.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/seer/ist441ist.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/templates/.ipynb_checkpoints/standard-checkpoint.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/.ipynb_checkpoints/standard-checkpoint.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/templates/seer/.ipynb_checkpoints/index-checkpoint.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/.ipynb_checkpoints/index-checkpoint.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/templates/seer/error.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/error.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/templates/seer/htmlresult.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/htmlresult.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/templates/seer/htmlresult.html.back" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/htmlresult.html.back" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/templates/seer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/templates/standard.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/standard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ist441/ist441/seer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/static/css/base.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/seer/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/coronaseer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/coronaseer.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/.ipynb_checkpoints/views-checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/.ipynb_checkpoints/views-checkpoint.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/static/images/.ipynb_checkpoints/icon-checkpoint.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/img/.ipynb_checkpoints/icon-checkpoint.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/static/images/.ipynb_checkpoints/ist441ist-checkpoint.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/img/.ipynb_checkpoints/ist441ist-checkpoint.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/static/images/icon.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/img/icon.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/static/images/ist441ist.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/seer/static/img/ist441ist.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/static/seer/ist441ist.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/templates/seer/error.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/error.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/templates/seer/htmlresult.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/results.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/templates/seer/htmlresult.html.back" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/templates/seer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/seer/templates/seer/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/templates/standard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/seer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/seer/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,6 +56,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.django.DjangoModulesConfigurable" />
@@ -103,7 +76,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="/usr/local/bin/python3.7" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -145,7 +118,8 @@
       <workItem from="1584902275414" duration="2044000" />
       <workItem from="1584906916299" duration="320000" />
       <workItem from="1584907350399" duration="362000" />
-      <workItem from="1584907715879" duration="353000" />
+      <workItem from="1584907715879" duration="992000" />
+      <workItem from="1584908727300" duration="2137000" />
     </task>
     <servers />
   </component>
@@ -153,10 +127,10 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="184" y="99" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584906960305">
+    <state x="184" y="99" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584910867026">
       <screen x="0" y="23" width="1440" height="828" />
     </state>
-    <state x="184" y="99" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.828@0.23.1440.828" timestamp="1584906960305" />
+    <state x="184" y="99" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.828@0.23.1440.828" timestamp="1584910867026" />
     <state x="413" y="36" key="#coronaseer" timestamp="1584906777912">
       <screen x="0" y="23" width="1440" height="828" />
     </state>
@@ -177,13 +151,17 @@
       <screen x="0" y="23" width="1440" height="828" />
     </state>
     <state width="1398" height="214" key="GridCell.Tab.0.right/0.23.1440.828@0.23.1440.828" timestamp="1584907344890" />
-    <state x="221" y="76" key="SettingsEditor" timestamp="1584906776972">
+    <state x="221" y="76" key="SettingsEditor" timestamp="1584910848960">
       <screen x="0" y="23" width="1440" height="828" />
     </state>
-    <state x="221" y="76" key="SettingsEditor/0.23.1440.828@0.23.1440.828" timestamp="1584906776972" />
-    <state x="378" y="199" width="683" height="476" key="find.popup" timestamp="1584907529919">
+    <state x="221" y="76" key="SettingsEditor/0.23.1440.828@0.23.1440.828" timestamp="1584910848960" />
+    <state x="397" y="269" key="com.intellij.ide.util.TipDialog" timestamp="1584908813281">
       <screen x="0" y="23" width="1440" height="828" />
     </state>
-    <state x="378" y="199" width="683" height="476" key="find.popup/0.23.1440.828@0.23.1440.828" timestamp="1584907529919" />
+    <state x="397" y="269" key="com.intellij.ide.util.TipDialog/0.23.1440.828@0.23.1440.828" timestamp="1584908813281" />
+    <state x="378" y="199" width="683" height="476" key="find.popup" timestamp="1584910052239">
+      <screen x="0" y="23" width="1440" height="828" />
+    </state>
+    <state x="378" y="199" width="683" height="476" key="find.popup/0.23.1440.828@0.23.1440.828" timestamp="1584910052239" />
   </component>
 </project>

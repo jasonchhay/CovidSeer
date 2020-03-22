@@ -104,7 +104,7 @@ def search(request, query, start):
                 # f.filename= str(imageid)+'.png'
                 SearchResults.append(f)
 
-            return render(request, 'seer/htmlresult.html', {'results': SearchResults, 'q': query, \
+            return render(request, 'seer/results.html', {'results': SearchResults, 'q': query, \
                                                            'total': totalresultsNumFound, 'i': str(start + 1) \
                 , 'j': str(len(results) + start)})
         else:
