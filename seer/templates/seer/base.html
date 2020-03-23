@@ -1,0 +1,19 @@
+{% load static %}
+
+<!DOCTYPE html PUBLIC "//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>CoronaSeer</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrip-grid.css' %}">
+</head>
+
+    <body>
+        {% block content %}{% endblock %}
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="https://kit.fontawesome.com/e80c85a2cc.js" crossorigin="anonymous"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        {% block scripts %}{% endblock %}ß
+    </body>
+</html>

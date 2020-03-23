@@ -1,41 +1,26 @@
-{% load static %}
+{% extends "seer/base.html" %}
 
-<!DOCTYPE html PUBLIC "//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-<head>
-	<title>Dr. Lee Giles' website Search</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/bootstrip-grid.css' %}">
-</head>
+{% block content %}
+	{% if errormessage %}
+    <div id="navwrapper">
+        <span style="color:white; font-size:20pt;"><b>{{ errormessage }}</b></span>
+    </div>
+    {% endif %}
 
-    <body>
-        {% if errormessage %}
-            <div id="navwrapper">
-                <span style="color:white; font-size:20pt;"><b>{{ errormessage }}</b></span>
+    <div align="center">
+        <div style="position: absolute; top: 10%; left: 25%; width: 50%; height: 50%;">
+            <div>
+                <img src="{% static "img/icon.jpg" %}" alt="Your Own Logo"/>
             </div>
-        {% endif %}
-
-        <div align="center">
-            <div style="position: absolute; top: 10%; left: 25%; width: 50%; height: 50%;">
-                <div>
-                    <img src="{% static "img/icon.jpg" %}" alt="Your Own Logo"/>
-                </div>
-                <div style="padding-top:15px">
-                    <form method="post" action="{% url 'query' %}">
-                        {% csrf_token %}
-                        <input type="text" name="q" id="search_box" class='search_box'/>
-                        <input type="hidden" name="type" id="q_type" value="Figures"/>
-                        <input type="submit" value="Search" class="search_button"/><br/>
-                        <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>E.g. :</b> Authors, Publications, CiteSeer ... </span>
-                    </form>
-                </div>
+            <div style="padding-top:15px">
+                <form method="post" action="{% url 'query' %}">
+                    {% csrf_token %}
+                    <input type="text" name="q" id="search_box" class='search_box'/>
+                    <input type="hidden" name="type" id="q_type" value="Figures"/>
+                    <input type="submit" value="Search" class="search_button"/><br/>
+                    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>E.g. :</b> Authors, Publications, CiteSeer ... </span>
+                </form>
             </div>
         </div>
-
-        {% block content %}{% endblock %}
-        <script src="http://code.jquery.com/jquery-latest.js"></script>
-		<script src="https://kit.fontawesome.com/e80c85a2cc.js" crossorigin="anonymous"></script>
-        <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    </body>
-</html>
+    </div>
+{% endblock %}

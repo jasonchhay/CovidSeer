@@ -1,37 +1,60 @@
-{% extends "seer/index.html" %}
+{% extends "seer/base.html" %}
 
 {% block content %}
-	<div id="result_info">
-		Results <strong>{{i}} - {{j}} </strong> of <strong>{{total}}</strong>
-		<div id="pager">
-			<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
+	<div class="container">
+		<div id="search-container">
+			<div style="padding-top:15px">
+		        <form method="post" action="{% url 'query' %}">
+		            {% csrf_token %}
+		            <input type="text" name="q" id="search_box" class='search_box'/>
+		            <input type="hidden" name="type" id="q_type" value="Figures"/>
+		            <input type="submit" value="Search" class="search_button"/><br/>
+		        </form>
+		    </div>
+		</div>
+
+		<div id="result_info">
+			Results <strong>{{i}} - {{j}} </strong> of <strong>{{total}}</strong>
+			<div id="pager">
+				<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
+			</div>
+		</div>
+
+		<div class="result_list">
+		{% for hit in results %}
+			{% autoescape off %}
+				<div class="result">
+					<h3>
+						<!--<div class="resultid"><b>ResultId</b><p>{{ hit.resultid }} </p></div>-->
+						<div class="url">
+							<b><a href="http://{{hit.url}}">{{hit.title}}</a></b>
+	                        <!--<p>{{ hit.c }} </p></div>-->
+	                        <div class="description"><p>{{ hit.description }}</p></div>
+	                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
+	                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
+	                       -->
+						</div>
+					</h3>
+		         </div>
+			{% endautoescape%}
+		{% endfor%}
+		</div>
+
+	<!--</div>-->
+
+		<div id="result_info">
+			Results <strong>{{i}} - {{j}} </strong> of <strong>{{total}}</strong>
+			<div id="pager">
+				<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
+			</div>
 		</div>
 	</div>
+{% endblock %}
 
-	{% for hit in results %}
-		{% autoescape off %}
-			<div class="result">
-				<h3>
-					<!--<div class="resultid"><b>ResultId</b><p>{{ hit.resultid }} </p></div>-->
-					<div class="url">
-						<b><a href="http://{{hit.url}}">{{hit.title}}</a></b>
-                        <!--<p>{{ hit.c }} </p></div>-->
-                        <div class="description"><p>{{ hit.description }}</p></div>
-                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
-                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
-                       -->
-					</div>
-				</h3>
-	         </div>
-		{% endautoescape%}
-	{% endfor%}
-
-<!--</div>-->
-
-	<div id="result_info">
-		Results <strong>{{i}} - {{j}} </strong> of <strong>{{total}}</strong>
-		<div id="pager">
-			<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
-		</div>
-	</div>
+{% block javascript %}
+	<script type="text/javascript">
+		$( document ).ready(function() {
+            document.getElementById("search_box").value = document.getElementById("q_js").value;
+        };
+	</script>
 {% endblock %}
