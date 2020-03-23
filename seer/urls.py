@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('home/', views.home, name='home'),
+    path('/', views.home, name='home'),
     path('query/', views.query, name='query'),
     path('search/', views.search, name='search'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

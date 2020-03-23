@@ -46,7 +46,6 @@ def query(request):
 
 
 def search(request, query, start):
-    print(query)
     size = 10
     body = {
         "from": start,
