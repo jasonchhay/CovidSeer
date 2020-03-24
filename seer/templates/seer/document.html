@@ -8,12 +8,13 @@
 {% endblock %}
 
 {% block javascript %}
-	<link rel="stylesheet" href="{% static 'js/jsonview.js' %}">
-
+	<script type="text/javascript" src="{% static 'js/jsonview.js' %}"></script>
 	<script>
-		let data = '{{ result }}';
+		var data = "{{ result }}";
+		data = data.replace('"', "\"");
+		data = data.replace(/&quot;/g, '"');
+		
 		let target = '.root';
 		jsonView.format(data, target);
 	</script>
-
 {% endblock %}

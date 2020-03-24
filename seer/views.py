@@ -61,7 +61,8 @@ def Document(request, document_id):
     results = res['hits']['hits']
 
     if len(results) > 0:
-        return render(request, 'seer/document.html', {'result': json.dumps(res['hits']['hits'][0])})
+        print(json.dumps(results[0], separators=(',', ':')))
+        return render(request, 'seer/document.html', {'result': json.dumps(results[0], separators=(',', ':'))})
     else:
         raise Http404("Document does not exist")
 

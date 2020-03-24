@@ -52,10 +52,12 @@
 			</div>
 		</div>
 	</div>
+{% endblock %}
 
+{% block javascript %}
 	<script type="text/javascript">
 		$( document ).ready(function() {
             document.getElementById("search_box").value = document.getElementById("q_js").value;
-        };
+        });
 	</script>
 {% endblock %}
