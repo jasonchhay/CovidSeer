@@ -60,11 +60,45 @@ def Document(request, document_id):
     res = es.search(index=ELASTIC_INDEX, body=body)
     results = res['hits']['hits']
 
-    if len(results) > 0:
-        print(json.dumps(results[0], separators=(',', ':')))
-        return render(request, 'seer/document.html', {'result': json.dumps(results[0], separators=(',', ':'))})
-    else:
+    if len(results) == 0:
         raise Http404("Document does not exist")
+
+    result = results[0]
+
+    context = dict()
+    context['title'] = result['_source']['metadata']['title']
+    context['authors'] = []
+
+    for data in result['_source']['metadata']['authors']:
+        author = dict()
+
+        first_name = data['first']
+        mid_name = data['middle']
+
+        if len(mid_name) > 0:
+            first_name += " " + mid_name[0]
+
+        last_name = data['last']
+        suffix = data['suffix']
+
+        author['name'] = ' '.join([first_name, last_name, suffix])
+
+        if len(data['affiliation']) > 0:
+            author['laboratory'] = data['affiliation']['laboratory']
+            author['institution'] = data['affiliation']['institution']
+            author['location'] = data['affiliation']['location']
+
+        context['authors'].append(author)
+
+    abstracts = []
+    for abstract in result['_source']['abstract']:
+        abstracts.append(abstract['text'])
+    context['abstract'] = ' '.join(abstracts)
+
+    context['body'] = result['_source']['body']
+    context['json'] = json.dumps(result, separators=(',', ':'))
+
+    return render(request, 'seer/document.html', context)
 
 
 def __search(request, query, start):

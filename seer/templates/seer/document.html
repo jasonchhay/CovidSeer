@@ -1,20 +1,45 @@
+{% extends 'seer/base.html' %}
 {% load static %}
+
 {% block css %}
 	<link rel="stylesheet" href="{% static 'css/jsonview.css' %}">
 {% endblock %}
 
 {% block content %}
-	<div class="root"></div>
+	<div class="container-fluid">
+		<div class="content col-lg-9">
+			<row>
+				<h1>{{ title }}</h1>
+			</row>
+			<row>
+				<h2>Authors</h2>
+				{% for author in authors %}
+					<li>
+						<ul>{{ author.name }}</ul>
+					</li>
+				{% endfor %}
+			</row>
+			<row>
+				<h2>Abstract</h2>
+				<p>{{ abstract }}</p>
+			</row>
+			<row>
+				<h2>Body</h2>
+				<p>{{ body }}</p>
+			</row>
+		</div>
+	</div>
+	<div class="json"></div>
 {% endblock %}
 
 {% block javascript %}
 	<script type="text/javascript" src="{% static 'js/jsonview.js' %}"></script>
 	<script>
-		var data = "{{ result }}";
+		var data = "{{ json }}";
 		data = data.replace('"', "\"");
 		data = data.replace(/&quot;/g, '"');
 		
-		let target = '.root';
+		let target = '.json';
 		jsonView.format(data, target);
 	</script>
 {% endblock %}

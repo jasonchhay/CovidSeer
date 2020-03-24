@@ -8,15 +8,15 @@
     </div>
     {% endif %}
 
-    <div align="center">
+    <div class="container">
         <div class="search-bar-container">
             <div id="logo">
                 <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"/>
             </div>
-            <div style="padding-top:15px">
+            <div>
                 <form method="post" action="{% url 'query' %}">
                     {% csrf_token %}
-                    <input type="text" name="q" id="search_box" class='search_box'/>
+                    <input type="text" name="q" id="search-box" class='form-control'/>
                     <input type="hidden" name="type" id="q_type" value="Figures"/>
                     <input type="submit" value="Search" class="search_button"/><br/>
                     <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Search from biorxiv, medrxiv and more . . . </b> </span>

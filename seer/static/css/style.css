@@ -7,6 +7,10 @@ body {
     font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
 
+.content {
+    margin: auto;
+}
+
 #searchword {
     text-align: left;
     margin-top: 20px;
@@ -21,9 +25,8 @@ body {
 
 }
 
-#search_box {
+#search-box {
     padding: 4px;
-    border: solid 1px #666666;
     width: 300px;
     height: 30px;
     font-size: 18px;
