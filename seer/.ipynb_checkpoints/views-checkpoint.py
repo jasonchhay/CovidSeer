@@ -1,9 +1,6 @@
-from django.http import Http404
 from django.shortcuts import render
 from . import models
 from elasticsearch import Elasticsearch
-
-import json
 
 ERR_QUERY_NOT_FOUND = '<h1>Query not found</h1>'
 ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
@@ -19,6 +16,10 @@ if not es.ping():
     raise ValueError("Connection failed")
 
 
+# Include the following if user authentication is on (i.e., XPack is installed and linked with Elastic)
+# http_auth=(USER, PASSWORD),
+
+# SOLR_BASE_URL = "http://localhost:{0}/solr/{1}/select?&q=".format(SOLR_PORT,COLLECTION_NAME)
 def Home(request):
     return render(request, 'seer/index.html')
 
@@ -27,8 +28,8 @@ def Query(request):
     if request.method == 'POST':
         q = request.POST.get('q', None)
         start = request.POST.get('start', 0)
-        if q is not None and len(q) > 1:
-            return __search(request, q, start)
+        if q is not None and len(q) > 2:
+            return Search(request, q, start)
         else:
             if q is None:
                 return render(request, 'seer/index.html', {'errormessage': None})
@@ -48,25 +49,7 @@ def Query(request):
             return search(request, query, start)
 
 
-def Document(request, document_id):
-    print(document_id)
-    body = {
-        "query": {
-            "match": {
-                "_id": document_id
-            }
-        }
-    }
-    res = es.search(index=ELASTIC_INDEX, body=body)
-    results = res['hits']['hits']
-
-    if len(results) > 0:
-        return render(request, 'seer/document.html', {'result': json.dumps(res['hits']['hits'][0])})
-    else:
-        raise Http404("Document does not exist")
-
-
-def __search(request, query, start):
+def Search(request, query, start):
     size = 10
     body = {
         "from": start,
@@ -82,18 +65,16 @@ def __search(request, query, start):
         'highlight': {'fields': {'body': {}}}
     }
     res = es.search(index=ELASTIC_INDEX, body=body)
-    print("RESULTS", res)
-    print("RESULTS keys", res['hits']['total']['value'])
 
-    if not res.get('hits') or len(res) == 0 or res['hits']['total']['value'] == 0:
+    if not res.get('hits'):
         return render(request, 'seer/error.html',
                       {'errormessage': 'Your query returned zero results, please try another query'})
     else:
         print("search done")
-        totalresultsNumFound = res['hits']['total']['value']
+        totalresultsNumFound = res['hits']['total']
         # hlresults=r.json()['highlighting']
         results = res['hits']['hits']
-        #print(res['hits']['hits'])
+        print(res['hits']['hits'])
         SearchResults = []
         if len(results) > 0:
             for result in results:

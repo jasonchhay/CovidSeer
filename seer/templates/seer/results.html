@@ -5,6 +5,9 @@
 	<div class="container">
 		<div id="search-container">
 			<div style="padding-top:15px">
+		<div>
+                	<img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"/>
+            	</div>
 		        <form method="post" action="{% url 'query' %}">
 		            {% csrf_token %}
 		            <input type="text" name="q" id="search_box" class='search_box'/>
@@ -26,9 +29,8 @@
 			{% autoescape off %}
 				<div class="result">
 					<h3>
-						<!--<div class="resultid"><b>ResultId</b><p>{{ hit.resultid }} </p></div>-->
 						<div class="url">
-							<b><a href="http://{{hit.url}}">{{hit.title}}</a></b>
+							<b><a href="{% url 'document' document_id=hit.resultid %}">{{hit.title}}</a></b>
 	                        <!--<p>{{ hit.c }} </p></div>-->
 	                        <div class="description"><p>{{ hit.description }}</p></div>
 	                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
@@ -50,9 +52,7 @@
 			</div>
 		</div>
 	</div>
-{% endblock %}
 
-{% block javascript %}
 	<script type="text/javascript">
 		$( document ).ready(function() {
             document.getElementById("search_box").value = document.getElementById("q_js").value;

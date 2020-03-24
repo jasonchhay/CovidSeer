@@ -11,7 +11,7 @@
     <div align="center">
         <div style="position: absolute; top: 10%; left: 25%; width: 50%; height: 50%;">
             <div>
-                <img src="{% static "img/icon.jpg" %}" alt="Your Own Logo"/>
+                <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"/>
             </div>
             <div style="padding-top:15px">
                 <form method="post" action="{% url 'query' %}">
@@ -19,7 +19,7 @@
                     <input type="text" name="q" id="search_box" class='search_box'/>
                     <input type="hidden" name="type" id="q_type" value="Figures"/>
                     <input type="submit" value="Search" class="search_button"/><br/>
-                    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>E.g. :</b> Authors, Publications, CiteSeer ... </span>
+                    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Search from biorxiv, medrxiv and more . . . </b> </span>
                 </form>
             </div>
         </div>
