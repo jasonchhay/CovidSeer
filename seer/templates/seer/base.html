@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrip-grid.css' %}">
+	<link rel="stylesheet" href="{% static 'css/fontawesome-all.css' %}">
+	{% block css %}{% endblock %}
 </head>
 
     <body>
@@ -14,5 +16,6 @@
         <script src="http://code.jquery.com/jquery-latest.js"></script>
 		<script src="https://kit.fontawesome.com/e80c85a2cc.js" crossorigin="anonymous"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        {% block javascript %}{% endblock %}
     </body>
 </html>

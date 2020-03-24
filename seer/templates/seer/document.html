@@ -1,1 +1,19 @@
-{{ result }}
+{% load static %}
+{% block css %}
+	<link rel="stylesheet" href="{% static 'css/jsonview.css' %}">
+{% endblock %}
+
+{% block content %}
+	<div class="root"></div>
+{% endblock %}
+
+{% block javascript %}
+	<link rel="stylesheet" href="{% static 'js/jsonview.js' %}">
+
+	<script>
+		let data = '{{ result }}';
+		let target = '.root';
+		jsonView.format(data, target);
+	</script>
+
+{% endblock %}
