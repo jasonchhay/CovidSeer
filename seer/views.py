@@ -109,16 +109,15 @@ def __search(request, query, start):
         "query": {
             "multi_match": {
                 "query": query,
-                "fields": ["body", "abstract.text"],
-                "operator": "and"
+                "fields":  ["body","abstract.text^2", "metadata.title^3"],
             }
 
         },
-        'highlight': {'fields': {'body': {}}}
+        'highlight': {'fields': {'body': {}, 'abstract.text': {}}}
     }
     res = es.search(index=ELASTIC_INDEX, body=body)
-    print("RESULTS", res)
-    print("RESULTS keys", res['hits']['total']['value'])
+    #print("RESULTS", res)
+    #print("RESULTS keys", res['hits']['total']['value'])
 
     if not res.get('hits') or len(res) == 0 or res['hits']['total']['value'] == 0:
         return render(request, 'seer/error.html',
@@ -128,7 +127,7 @@ def __search(request, query, start):
         totalresultsNumFound = res['hits']['total']['value']
         # hlresults=r.json()['highlighting']
         results = res['hits']['hits']
-        #print(res['hits']['hits'])
+        print('Got :',res['hits']['total']['value'])
         SearchResults = []
         if len(results) > 0:
             for result in results:
@@ -136,7 +135,11 @@ def __search(request, query, start):
                 f = models.SearchResult(resultid)  # calling the object class that is defined inside models.py
 
                 f.content = result['_source']['body']
-
+                if len(result['_source']['metadata']['authors'])>0:
+                    if 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
+                        f.affiliation = result['_source']['metadata']['authors'][0]['affiliation']['location']
+                else:
+                    f.affiliation = ''
                 # rawpath= result['_source']['file']['url']
 
                 # removing local folder path
@@ -146,8 +149,9 @@ def __search(request, query, start):
                 # f.description = str(result['_source']['meta']['raw']['description'])
                 f.description = ''
                 if 'highlight' in result:
-                    for desc in result['highlight']['body']:
-                        f.description = f.description + desc + '\n'
+                    if 'body' in result['highlight']:
+                        for desc in result['highlight']['body']:
+                            f.description = f.description + desc + '\n'
 
                 # f.description = " ".join(f.description).encode("utf-8")
                 '''

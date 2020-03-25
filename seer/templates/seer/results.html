@@ -2,51 +2,46 @@
 {% load static %}
 
 {% block content %}
+
+
+
 	<div class="container">
-		<div id="search-container">
-			<div style="padding-top:15px">
-		<div>
-                	<img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"/>
-            	</div>
-		        <form method="post" action="{% url 'query' %}">
-		            {% csrf_token %}
-		            <input type="text" name="q" id="search_box" class='search_box'/>
-		            <input type="hidden" name="type" id="q_type" value="Figures"/>
-		            <input type="submit" value="Search" class="search_button"/><br/>
-		        </form>
-		    </div>
+		<div id="search-container" align="center" style="padding:10px">
+	        <form method="post" action="{% url 'query' %}">
+	            {% csrf_token %}
+		    <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
+	            <input type="text" name="q" id="search_box" class='search_box'/>
+	            <input type="hidden" name="type" id="q_type" value="Figures"/>
+		    <input type="submit" value="Search" class="search_button btn btn-dark"/><br/>
+	        </form>
 		</div>
 
-		<div id="result_info">
+		<div id="result_info" >
 			Results <strong>{{i}} - {{j}} </strong> of <strong>{{total}}</strong>
-			<div id="pager">
-				<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
-			</div>
 		</div>
 
-		<div class="result_list">
+		<div class="result_list" align="left" style="width:60%">
 		{% for hit in results %}
 			{% autoescape off %}
 				<div class="result">
-					<h3>
-						<div class="url">
-							<b><a href="{% url 'document' document_id=hit.resultid %}">{{hit.title}}</a></b>
+					
+						<div class="url" >
+					<h5>		<b><a href="{% url 'document' document_id=hit.resultid %}">{{hit.title}}</a></b> </h5>
 	                        <!--<p>{{ hit.c }} </p></div>-->
-	                        <div class="description"><p>{{ hit.description }}</p></div>
+	                        <div class="description" ><p class="small">{{ hit.description }}</p></div>
 	                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
 	                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
 	                       -->
 						</div>
-					</h3>
 		         </div>
 			{% endautoescape%}
 		{% endfor%}
+		<div class="location" ><p class="small">{{ hit.affiliation }}</p></div>
 		</div>
 
 	<!--</div>-->
 
 		<div id="result_info">
-			Results <strong>{{i}} - {{j}} </strong> of <strong>{{total}}</strong>
 			<div id="pager">
 				<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
 			</div>
