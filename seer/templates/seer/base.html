@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html PUBLIC "//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>CovidSeer</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mdb/mdb.lite.css' %}">
+	<link rel="stylesheet" href="{% static 'css/fontawesome-all.css' %}">
+	<link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab&display=swap" rel="stylesheet">
+	{% block css %}{% endblock %}
+</head>
+
+<div class="header">
+<a href="https://csxstatic.ist.psu.edu/home" target="_blank">About</a>
+  <div class="header-right">
+    <a  href="http://heisenberg.ist.psu.edu:8000/" >Home</a>
+    <a href="https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge" target="_blank">Data</a>
+    <a href="https://csxstatic.ist.psu.edu/contact/" target="_blank">Contact</a>
+  </div>
+</div>   <body>
+    	<div class="container-fluid">
+			<div class="content col-lg-9">
+                {% block content %}{% endblock %}
+			</div>
+	    </div>
+	    
+		<script src="https://kit.fontawesome.com/e80c85a2cc.js" crossorigin="anonymous"></script>
+        <script src="{% static 'js/jquery.js' %}"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/mdb.js' %}"></script>
+        {% block javascript %}{% endblock %}
+    </body>
+</div>
+</html>

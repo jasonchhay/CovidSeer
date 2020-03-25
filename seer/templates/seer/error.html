@@ -1,9 +1,16 @@
-{% extends "seer/index.html" %}
+{% extends "seer/base.html" %}
 
 {% block content %}
 	{% if errormessage %}
 		<div id="error_info">
-		    <span {style="color:red font-size: 15pt"}> {{ errormessage }} </span>
+		    <span style="color:red; font-size: 15pt;"> {{ errormessage }}</span>
 		</div>
+<button onclick="goBack()">Go Back</button>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
 	{% endif %}
 {% endblock %}

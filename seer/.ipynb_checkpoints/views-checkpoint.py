@@ -1,7 +1,6 @@
-from django.http import HttpResponse
 from django.shortcuts import render
 from . import models
-from elasticsearch import Elasticsearch, helpers
+from elasticsearch import Elasticsearch
 
 ERR_QUERY_NOT_FOUND = '<h1>Query not found</h1>'
 ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
@@ -16,26 +15,30 @@ es = Elasticsearch(['http://csxindex05:9200/'], verify_certs=True)
 if not es.ping():
     raise ValueError("Connection failed")
 
+
 # Include the following if user authentication is on (i.e., XPack is installed and linked with Elastic)
 # http_auth=(USER, PASSWORD),
 
 # SOLR_BASE_URL = "http://localhost:{0}/solr/{1}/select?&q=".format(SOLR_PORT,COLLECTION_NAME)
-def home(request):
+def Home(request):
     return render(request, 'seer/index.html')
 
-def query(request):
+
+def Query(request):
     if request.method == 'POST':
         q = request.POST.get('q', None)
         start = request.POST.get('start', 0)
-        if q != None and len(q) > 2:
-            return search(request, q, start)
+        if q is not None and len(q) > 2:
+            return Search(request, q, start)
         else:
-            if q == None:
+            if q is None:
                 return render(request, 'seer/index.html', {'errormessage': None})
             else:
                 errormessage = 'Please use larger queries'
                 return render(request, 'seer/index.html', {'errormessage': errormessage})
-    else:  # it's a get request, can come from two sources. if start=0, or start not in GET dictionary, someone is requesting the page
+    else:
+        # it's a get request, can come from two sources. if start=0
+        # or start not in GET dictionary, someone is requesting the page
         # for the first time
 
         start = int(request.GET.get('start', 0))
@@ -46,18 +49,17 @@ def query(request):
             return search(request, query, start)
 
 
-def search(request, query, start):
-    print(query)
+def Search(request, query, start):
     size = 10
     body = {
         "from": start,
         "size": size,
         "query": {
-          "multi_match": {
-            "query": query,
-            "fields": ["body", "abstract.text"],
-            "operator": "and"
-          }          
+            "multi_match": {
+                "query": query,
+                "fields": ["body", "abstract.text"],
+                "operator": "and"
+            }
 
         },
         'highlight': {'fields': {'body': {}}}
@@ -65,11 +67,8 @@ def search(request, query, start):
     res = es.search(index=ELASTIC_INDEX, body=body)
 
     if not res.get('hits'):
-
         return render(request, 'seer/error.html',
                       {'errormessage': 'Your query returned zero results, please try another query'})
-
-
     else:
         print("search done")
         totalresultsNumFound = res['hits']['total']
@@ -106,12 +105,9 @@ def search(request, query, start):
                 SearchResults.append(f)
 
             return render(request, 'seer/results.html', {'results': SearchResults, 'q': query, \
-                                                           'total': totalresultsNumFound, 'i': str(start + 1) \
+                                                         'total': totalresultsNumFound, 'i': str(start + 1) \
                 , 'j': str(len(results) + start)})
         else:
             return (
-            request, 'seer/error.html', {'errormessage': 'Your search returned zero results, please try another query'})
-
-
-
-
+                request, 'seer/error.html',
+                {'errormessage': 'Your search returned zero results, please try another query'})
