@@ -45,7 +45,7 @@ def Query(request):
         if start == 0 or query == None:
             return render(request, 'seer/index.html')
         else:
-            return search(request, query, start)
+            return __search(request, query, start)
 
 
 def Document(request, document_id):
@@ -102,7 +102,7 @@ def Document(request, document_id):
 
 
 def __search(request, query, start):
-    size = 10
+    size = 15
     body = {
         "from": start,
         "size": size,
@@ -149,6 +149,7 @@ def __search(request, query, start):
                 # f.description = str(result['_source']['meta']['raw']['description'])
                 f.description = ''
                 if 'highlight' in result:
+                    print(result['highlight'])
                     if 'body' in result['highlight']:
                         for desc in result['highlight']['body']:
                             f.description = f.description + desc + '\n'
@@ -162,9 +163,15 @@ def __search(request, query, start):
                 # f.filename= str(imageid)+'.png'
                 SearchResults.append(f)
 
-            return render(request, 'seer/results.html', {'results': SearchResults, 'q': query, \
-                                                         'total': totalresultsNumFound, 'i': str(start + 1) \
-                , 'j': str(len(results) + start)})
+            context = dict()
+            context['results'] = SearchResults
+            context['q'] = query
+            context['total'] = totalresultsNumFound
+            context['position'] = str(start + 1)
+            context['nextResults'] = str(len(results) + start)
+            context['prevResults'] = str(start - size)
+
+            return render(request, 'seer/results.html', context)
         else:
             return (
                 request, 'seer/error.html',

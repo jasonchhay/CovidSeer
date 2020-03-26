@@ -7,17 +7,17 @@
 
 	<div class="container">
 		<div id="search-container" align="center" style="padding:10px">
-	        <form method="post" action="{% url 'query' %}">
+	        <form method="post" action="{% url 'search' %}">
 	            {% csrf_token %}
-		    <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
-	            <input type="text" name="q" id="search_box" class='search_box'/>
+		        <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
+	            <input type="text" name="q" id="search_box" class='search_box' value="{{ q }}"/>
 	            <input type="hidden" name="type" id="q_type" value="Figures"/>
 		    <input type="submit" value="Search" class="search_button btn btn-dark"/><br/>
 	        </form>
 		</div>
 
 		<div id="result_info" >
-			Results <strong>{{i}} - {{j}} </strong> of <strong>{{total}}</strong>
+			Results <strong>{{position}} - {{nextResults}} </strong> of <strong>{{total}}</strong>
 		</div>
 
 		<div class="result_list" align="left" style="width:60%">
@@ -43,16 +43,14 @@
 
 		<div id="result_info">
 			<div id="pager">
-				<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
+				{% if prevResults > 0 %}
+				<a href="{% url 'search' %}?q={{q}}&start={{prevResults}}">← Prev 15</a>
+				{% endif %}
+				
+				{% if 1 == 1 %}
+				<a href="{% url 'search' %}?q={{q}}&start={{nextResults}}">Next 15 →</a>
+				{% endif %}
 			</div>
 		</div>
 	</div>
-{% endblock %}
-
-{% block javascript %}
-	<script type="text/javascript">
-		$( document ).ready(function() {
-            document.getElementById("search_box").value = document.getElementById("q_js").value;
-        });
-	</script>
 {% endblock %}
