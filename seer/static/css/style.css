@@ -7,6 +7,10 @@ body {
     font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
 
+.container-fluid {
+    padding: 5vh 0;
+}
+
 .content {
     margin: auto;
 }
@@ -37,9 +41,9 @@ body {
 .search-container {
     width: 90%;
     height: 10%;
-    padding-top:20px;
     margin: auto;
     text-align: center;
+    padding: 15vh 0 20vh 0;
 }
 
 .search-form {
