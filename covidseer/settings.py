@@ -50,12 +50,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'coronaseer.urls'
+ROOT_URLCONF = 'covidseer.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['/data/CoronaSeer/coronaseer/coronaseer/seer/templates',],
+        'DIRS': ['/data/CoronaSeer/covidseer/covidseer/seer/templates',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'coronaseer.wsgi.application'
+WSGI_APPLICATION = 'covidseer.wsgi.application'
 
 
 # Database
@@ -122,6 +122,5 @@ STATIC_URL = '/static/'
 
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    '/data/CoronaSeer/coronaseer/coronaseer/coronaseer/static',
+    os.path.join(BASE_DIR, "static")
 ]
