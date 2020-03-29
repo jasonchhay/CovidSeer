@@ -26,7 +26,8 @@ def Home(request):
 def Query(request):
     if request.method == 'POST':
         q = request.POST.get('q', None)
-        start = request.POST.get('start', 0)
+        start = request.POST.get('page', 1)
+
         if q is not None and len(q) > 1:
             return __search(request, q, start)
         else:
@@ -40,12 +41,12 @@ def Query(request):
         # or start not in GET dictionary, someone is requesting the page
         # for the first time
 
-        start = int(request.GET.get('start', 0))
+        start = int(request.GET.get('page', 1))
         query = request.GET.get('q', None)
         if start == 0 or query == None:
             return render(request, 'seer/index.html')
         else:
-            return search(request, query, start)
+            return __search(request, query, start)
 
 
 def Document(request, document_id):
@@ -101,8 +102,9 @@ def Document(request, document_id):
     return render(request, 'seer/document.html', context)
 
 
-def __search(request, query, start):
-    size = 10
+def __search(request, query, page):
+    size = 15
+    start = (page - 1) * size
     body = {
         "from": start,
         "size": size,
@@ -149,6 +151,7 @@ def __search(request, query, start):
                 # f.description = str(result['_source']['meta']['raw']['description'])
                 f.description = ''
                 if 'highlight' in result:
+                    print(result['highlight'])
                     if 'body' in result['highlight']:
                         for desc in result['highlight']['body']:
                             f.description = f.description + desc + '\n'
@@ -162,9 +165,39 @@ def __search(request, query, start):
                 # f.filename= str(imageid)+'.png'
                 SearchResults.append(f)
 
-            return render(request, 'seer/results.html', {'results': SearchResults, 'q': query, \
-                                                         'total': totalresultsNumFound, 'i': str(start + 1) \
-                , 'j': str(len(results) + start)})
+            context = dict()
+            context['results'] = SearchResults
+            context['q'] = query
+            context['total'] = totalresultsNumFound
+            context['pageSize'] = size
+            context['position'] = start + 1
+            context['nextResults'] = len(results) + start
+            context['prevResults'] = start - size
+
+            context['page'] = (context['position'] // size) + 1
+            context['nextPage'] = max(page + 1, 1)
+            context['prevPage'] = page - 1
+
+            numPages = (totalresultsNumFound // size) + 1
+
+            if context['page'] <= 4:
+                context['prevPageLimit'] = 1
+            else:
+                context['prevPageLimit'] = context['page'] - 4
+
+            diff = numPages - context['page']
+
+            if numPages - context['page'] < 4:
+                context['nextPageLimit'] = context['page'] + diff
+            elif context['prevPageLimit'] < 2:
+                context['nextPageLimit'] = min(9, numPages)
+            else:
+                context['nextPageLimit'] = context['page'] + 4
+
+            context['prevPageList'] = [i for i in range(context['prevPageLimit'], context['page'])]
+            context['nextPageList'] = [i for i in range(context['page'] + 1, context['nextPageLimit'] + 1)]
+
+            return render(request, 'seer/results.html', context)
         else:
             return (
                 request, 'seer/error.html',

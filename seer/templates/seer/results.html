@@ -1,23 +1,24 @@
 {% extends "seer/base.html" %}
 {% load static %}
 
+{% block css %}
+	<link rel="stylesheet" href="{% static 'css/results.css' %}">
+{% endblock %}
+
 {% block content %}
-
-
-
 	<div class="container">
 		<div id="search-container" align="center" style="padding:10px">
-	        <form method="post" action="{% url 'query' %}">
+	        <form method="post" action="{% url 'search' %}">
 	            {% csrf_token %}
-		    <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
-	            <input type="text" name="q" id="search_box" class='search_box'/>
+		        <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
+	            <input type="text" name="q" id="search_box" class='search_box' value="{{ q }}"/>
 	            <input type="hidden" name="type" id="q_type" value="Figures"/>
 		    <input type="submit" value="Search" class="search_button btn btn-dark"/><br/>
 	        </form>
 		</div>
 
 		<div id="result_info" >
-			Results <strong>{{i}} - {{j}} </strong> of <strong>{{total}}</strong>
+			Results <strong>{{position}} - {{nextResults}} </strong> of <strong>{{total}}</strong>
 		</div>
 
 		<div class="result_list" align="left" style="width:60%">
@@ -42,17 +43,23 @@
 	<!--</div>-->
 
 		<div id="result_info">
-			<div id="pager">
-				<a href="/?q={{q}}&start={{j}}">Next 10 →</a>
+			<div class="pager">
+				{% if prevResults != prevPageLimit and prevPage > 0 %}
+				<a href="{% url 'search' %}?q={{q}}&page={{ prevPage }}" id="prev-page">Prev</a>
+				{% endif %}
+				
+				{% for i in prevPageList %}
+					<a href="{% url 'search' %}?q={{q}}&page={{ i }}">{{ i }}</a>
+				{% endfor %}
+				<strong>{{ page }}</strong>
+				{% for i in nextPageList %}
+					<a href="{% url 'search' %}?q={{q}}&page={{ i }}">{{ i }}</a>
+				{% endfor %}
+				
+				{% if nextResults != nextPageLimit and nextPage <= nextPageLimit %}
+				<a href="{% url 'search' %}?q={{q}}&page={{ nextPage }}" id="next-page">Next</a>
+				{% endif %}
 			</div>
 		</div>
 	</div>
-{% endblock %}
-
-{% block javascript %}
-	<script type="text/javascript">
-		$( document ).ready(function() {
-            document.getElementById("search_box").value = document.getElementById("q_js").value;
-        });
-	</script>
 {% endblock %}
