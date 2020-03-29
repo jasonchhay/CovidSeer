@@ -66,4 +66,5 @@ local_settings.py
 .idea/
 .idea/workspace.xml
 
-static/
+seer/static/.DS_Store
+seer/static/img/.DS_Store
