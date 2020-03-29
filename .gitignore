@@ -65,3 +65,5 @@ local_settings.py
 # PyCharm files
 .idea/
 .idea/workspace.xml
+
+static/
