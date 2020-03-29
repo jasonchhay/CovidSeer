@@ -16,7 +16,7 @@
 	<div class="header">
 		<a href="https://csxstatic.ist.psu.edu/home" target="_blank">About</a>
 	  <div class="header-right">
-	    <a  href="http://heisenberg.ist.psu.edu:8000/">Home</a>
+	    <a  href="{% url 'home' %}">Home</a>
 	    <a  href="https://csxstatic.ist.psu.edu/people/team" target="_blank">Team</a>
 	    <a href="https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge" target="_blank">Data</a>
 	    <a href="https://csxstatic.ist.psu.edu/contact/" target="_blank">Contact</a>
@@ -31,10 +31,12 @@
 	</body>
 	<footer class="footer-distributed">
 	            <div class="footer-left">
-	                <img src="{% static 'img/footer_logo.png' %}" width="510" height="150">
+	                <img id="psu_logo" src="{% static 'img/psu_logo.png' %}" width="400vw">
 		            <div class="elasticsearch">
-			            <img src="{% static 'img/logo-elasticsearch-64-color-reverse.svg' %}">
-			            <h5>Powered by ElasticSearch</h5>
+			            <a href="https://www.elastic.co/enterprise-search">
+				            <img src="{% static 'img/svg/logo-elasticsearch-64-color-reverse.svg' %}" width="50vw" style="display: inline-block;">
+				            <p style="color: white; display: inline-block;">Powered by ElasticSearch</p>
+			            </a>
 		            </div>
 		            <p class="footer-links">
 	                    <a href="/privacy-policy">Privacy Policy</a>

@@ -13,20 +13,19 @@ function populateSearchBox() {
         <span style="color:white; font-size:20pt;"><b>{{ errormessage }}</b></span>
     </div>
     {% endif %}
-    <div class="container">
-        <div class="search-container col-md-9">
-            <div id="homepage-logo">
-                <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"/>
-            </div>
-            <div>
-                <form class="search-form" method="post" action="{% url 'search' %}?test=10">
-                    {% csrf_token %}
-                    <input type="text" name="q" id="search-box" class='form-control'/>
-                    <input type="hidden" name="type" id="q_type" value="Figures"/>
-                    <input type="submit" value="Search" class="search_button btn btn-dark"/><br/>
-                    <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Search from biorxiv, medrxiv, PUBMed and more . . . </b></span>
-                </form>
-            </div>
+    <div class="search-container col-md-9">
+        <div id="homepage-logo">
+            <img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"/>
+        </div>
+        <div>
+            <form class="search-form" method="post" action="{% url 'search' %}?test=10">
+                {% csrf_token %}
+                <input type="text" name="q" id="search-box" class='form-control'/>
+                <input type="hidden" name="type" id="q_type" value="Figures"/>
+                <input type="submit" value="Search" class="search_button btn btn-dark"/><br/>
+                <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Search from biorxiv, medrxiv, PUBMed and more . . . </b></span>
+            </form>
+            <a href="https://pages.semanticscholar.org/coronavirus-research">About the data</a>
         </div>
     </div>
 {% endblock %}

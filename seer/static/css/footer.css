@@ -1,5 +1,4 @@
 .footer-distributed{
-    margin-top: 40px;
 	background-color: #1B263C;
 	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
 	box-sizing: border-box;
@@ -42,8 +41,8 @@
 
 .footer-distributed .footer-links{
 	color:  #ffffff;
-	margin: 20px 0 12px;
-	padding: 0;
+    margin: 5vh 0 1.5vh;
+    padding: 0;
 }
 
 .footer-distributed .footer-links a{
@@ -177,4 +176,8 @@
 		margin-left: 0;
 	}
 
+}
+
+#psu_logo {
+    margin-bottom: 3vh;
 }

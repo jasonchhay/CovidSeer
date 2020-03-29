@@ -1,10 +1,11 @@
 {% extends "seer/base.html" %}
 {% load static %}
 
+{% block css %}
+	<link rel="stylesheet" href="{% static 'css/results.css' %}">
+{% endblock %}
+
 {% block content %}
-
-
-
 	<div class="container">
 		<div id="search-container" align="center" style="padding:10px">
 	        <form method="post" action="{% url 'search' %}">
@@ -42,13 +43,21 @@
 	<!--</div>-->
 
 		<div id="result_info">
-			<div id="pager">
-				{% if prevResults > 0 %}
-				<a href="{% url 'search' %}?q={{q}}&start={{prevResults}}">← Prev 15</a>
+			<div class="pager">
+				{% if prevResults != prevPageLimit and prevPage > 0 %}
+				<a href="{% url 'search' %}?q={{q}}&page={{ prevPage }}" id="prev-page">Prev</a>
 				{% endif %}
 				
-				{% if 1 == 1 %}
-				<a href="{% url 'search' %}?q={{q}}&start={{nextResults}}">Next 15 →</a>
+				{% for i in prevPageList %}
+					<a href="{% url 'search' %}?q={{q}}&page={{ i }}">{{ i }}</a>
+				{% endfor %}
+				<strong>{{ page }}</strong>
+				{% for i in nextPageList %}
+					<a href="{% url 'search' %}?q={{q}}&page={{ i }}">{{ i }}</a>
+				{% endfor %}
+				
+				{% if nextResults != nextPageLimit and nextPage <= nextPageLimit %}
+				<a href="{% url 'search' %}?q={{q}}&page={{ nextPage }}" id="next-page">Next</a>
 				{% endif %}
 			</div>
 		</div>

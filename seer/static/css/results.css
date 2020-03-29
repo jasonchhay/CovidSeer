@@ -1,0 +1,11 @@
+.pager {
+    text-align: left;
+}
+
+#prev-page {
+    margin-right: 10px;
+}
+
+#next-page {
+    margin-left: 10px;
+}
