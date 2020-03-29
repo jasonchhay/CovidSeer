@@ -9,3 +9,12 @@
 #next-page {
     margin-left: 10px;
 }
+
+.results-container {
+    margin-left: -5vw;
+}
+
+.results-container #search-box {
+    margin: 0;
+    display: inline-block;
+}
