@@ -66,4 +66,3 @@ local_settings.py
 .idea/
 .idea/workspace.xml
 
-static/
