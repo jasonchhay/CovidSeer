@@ -1,4 +1,4 @@
-ner {
+.document-container {
     color: black;
 }
 
@@ -68,5 +68,3 @@ p {
     -webkit-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
 }
-
-
