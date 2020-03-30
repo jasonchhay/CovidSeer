@@ -6,10 +6,12 @@
 {% endblock %}
 
 {% block content %}
-	<div class="container results-container">
-		<div class="result-container col-md-10">
-			<div id="search-container col-md-10">
-				<img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
+	<div class="container">
+		<div class="results-container col-md-11">
+			<div id="search-container">
+				<a href="{% url 'home' %}">
+					<img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
+				</a>
 		        <form method="post" action="{% url 'search' %}">
 		            {% csrf_token %}
 			        <div class="search-bar-wrapper">
@@ -47,9 +49,13 @@
 			</div>
 			
 			<div class="pager">
-				{% if prevResults != prevPageLimit and prevPage > 0 %}
-				<a href="{% url 'search' %}?q={{q}}&page={{ prevPage }}" id="prev-page">Prev</a>
-				{% endif %}
+				<span id="prev-page">
+					{% if prevResults != prevPageLimit and prevPage > 0 %}
+					<a href="{% url 'search' %}?q={{q}}&page={{ prevPage }}">Prev</a>
+					{% else %}
+					Prev
+					{% endif %}
+				</span>
 				
 				{% for i in prevPageList %}
 					<a href="{% url 'search' %}?q={{q}}&page={{ i }}">{{ i }}</a>
@@ -59,9 +65,13 @@
 					<a href="{% url 'search' %}?q={{q}}&page={{ i }}">{{ i }}</a>
 				{% endfor %}
 				
-				{% if nextResults != nextPageLimit and nextPage <= nextPageLimit %}
-				<a href="{% url 'search' %}?q={{q}}&page={{ nextPage }}" id="next-page">Next</a>
-				{% endif %}
+				<span id="next-page">
+					{% if nextResults != nextPageLimit and nextPage <= nextPageLimit %}
+					<a href="{% url 'search' %}?q={{q}}&page={{ nextPage }}">Next</a>
+					{% else %}
+					Next
+					{% endif %}
+				</span>
 			</div>
 
 		</div>
