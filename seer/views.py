@@ -152,6 +152,10 @@ def __search(request, query, page):
             for result in results:
                 resultid = result['_id']
                 f = models.SearchResult(resultid)  # calling the object class that is defined inside models.py
+                f.title = result['_source']['metadata']['title']
+
+                if len(f.title) == 0:
+                    continue
 
                 f.content = result['_source']['body']
                 if len(result['_source']['metadata']['authors'])>0:
@@ -165,6 +169,7 @@ def __search(request, query, page):
                 f.url = result['_source']['metadata']['title']
 
                 f.title = result['_source']['metadata']['title']
+
                 # f.description = str(result['_source']['meta']['raw']['description'])
                 f.description = ''
                 if 'highlight' in result:
