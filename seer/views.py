@@ -136,7 +136,7 @@ def __search(request, query, page):
 
     if not res.get('hits') or len(res) == 0 or res['hits']['total']['value'] == 0:
         return render(request, 'seer/results.html',
-                      {'q': query, 'errormessage': 'Your query returned zero results, please try another query'})
+                      {'q': query, 'errormessage': 'Your query returned zero results, please try another query.'})
     else:
         print("search done")
         totalresultsNumFound = res['hits']['total']['value']
@@ -218,4 +218,4 @@ def __search(request, query, page):
         else:
             return (
                 request, 'seer/results.html',
-                {'q': 'query', 'errormessage': 'Your search returned zero results, please try another query'})
+                {'q': 'query', 'errormessage': 'Your search returned zero results, please try another query.'})
