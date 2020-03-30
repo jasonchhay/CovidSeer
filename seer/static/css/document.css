@@ -43,3 +43,28 @@ p {
     /* margin: auto; */
     vertical-align: top;
 }
+
+#authors {
+    margin-bottom: 3vh;
+}
+
+
+#doc-body {
+    height: 24rem;
+    overflow: hidden;
+}
+
+#show-hide {
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+#show-hide:hover {
+    color: #0056b3;
+    text-decoration: none;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
