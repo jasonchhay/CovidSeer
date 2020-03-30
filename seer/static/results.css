@@ -1,3 +1,7 @@
+.pager {
+    text-align: left;
+}
+
 #prev-page {
     margin-right: 10px;
 }
@@ -22,11 +26,5 @@
 
 .pager {
     text-align: center;
-    margin: 40px auto auto auto;
-    font-size: 1.25rem;
+    margin: auto;
 }
-
-.pager > a, .pager > strong {
-    margin: auto .6vw;
-}
-
