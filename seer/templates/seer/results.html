@@ -7,23 +7,23 @@
 
 {% block content %}
 	<div class="container results-container">
-		<div id="search-container col-md-10" style="padding:10px">
-			<img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
-	        <form method="post" action="{% url 'search' %}">
-	            {% csrf_token %}
-		        <div class="search-bar-wrapper">
-		            <input type="text" name="q" id="search-box" class='' value="{{ q }}"/>
-		            <input type="hidden" name="type" id="q_type" value="Figures"/>
-			        <button type="submit" value="Search" class="search-button btn btn-dark">
-				        <i class="fas fa-search"></i>
-			        </button>
-		        </div>
-	        <br/>
-	        </form>
-		</div>
-		
 		<div class="result-container col-md-10">
-			<div id="result_info" >
+			<div id="search-container col-md-10">
+				<img src="{% static "img/icon.png" %}" alt="CoronaSeer Logo"  height="60" width="140"/>
+		        <form method="post" action="{% url 'search' %}">
+		            {% csrf_token %}
+			        <div class="search-bar-wrapper">
+				            <input type="text" name="q" id="search-box" class='form-control' value="{{ q }}"/>
+				            <input type="hidden" name="type" id="q_type" value="Figures"/>
+					        <button type="submit" value="Search" class="search-button btn">
+						        <i class="fas fa-search"></i>
+					        </button>
+			        </div>
+		        <br/>
+		        </form>
+			</div>
+			
+			<div id="result_info">
 				Results <strong>{{position}} - {{nextResults}} </strong> of <strong>{{total}}</strong>
 			</div>
 	

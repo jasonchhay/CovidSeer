@@ -14,9 +14,13 @@
         <div style="padding-bottom:5vh;">
             <form class="search-form" method="post" action="{% url 'search' %}">
                 {% csrf_token %}
-                <input type="text" name="q" id="search-box" class='form-control'/>
-                <input type="hidden" name="type" id="q_type" value="Figures"/>
-                <input type="submit" value="Search" class="search_button btn btn-dark"/><br/>
+                <div class="search-bar-wrapper">
+                        <input type="text" name="q" id="search-box" class='form-control' value="{{ q }}"/>
+                        <input type="hidden" name="type" id="q_type" value="Figures"/>
+                        <button type="submit" value="Search" class="search-button btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                </div>
                 <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Search from biorxiv, medrxiv, PUBMed and more . . . </b></span>
             </form>
             <a href="https://pages.semanticscholar.org/coronavirus-research">About the data</a>
