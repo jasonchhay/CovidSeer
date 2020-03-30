@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from . import models
 from elasticsearch import Elasticsearch
@@ -50,7 +50,6 @@ def Query(request):
 
 
 def Document(request, document_id):
-    print(document_id)
     body = {
         "query": {
             "match": {
@@ -67,6 +66,7 @@ def Document(request, document_id):
     result = results[0]
 
     context = dict()
+    context['docId'] = document_id
     context['title'] = result['_source']['metadata']['title']
     context['authors'] = []
 
@@ -100,6 +100,23 @@ def Document(request, document_id):
     context['json'] = json.dumps(result, separators=(',', ':'))
 
     return render(request, 'seer/document.html', context)
+
+
+def DocumentJson(request, document_id):
+    body = {
+        "query": {
+            "match": {
+                "_id": document_id
+            }
+        }
+    }
+    res = es.search(index=ELASTIC_INDEX, body=body)
+    results = res['hits']['hits']
+
+    if len(results) == 0:
+        raise Http404("Document does not exist")
+
+    return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
 
 
 def __search(request, query, page):

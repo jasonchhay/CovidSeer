@@ -9,3 +9,22 @@
 #next-page {
     margin-left: 10px;
 }
+
+.results-container .col-md-11 {
+    margin: auto;
+}
+
+.results-container #search-box {
+    margin: 0;
+    display: inline-block;
+}
+
+.url {
+    margin-bottom: 1vh;
+    padding-top: 1.5vh;
+}
+
+.pager {
+    text-align: center;
+    margin: auto;
+}

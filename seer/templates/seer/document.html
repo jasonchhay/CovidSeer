@@ -1,60 +1,80 @@
-{% extends 'seer/base.html' %}
+{% extends "seer/base.html" %}
 {% load static %}
 
 {% block css %}
 	<link rel="stylesheet" href="{% static 'css/document.css' %}">
-	<link rel="stylesheet" href="{% static 'css/jsonview.css' %}">
+	<!--<link rel="stylesheet" href="{% static 'css/jsonview.css' %}">-->
 {% endblock %}
 
 {% block content %}
-	<div class="document-container">
-		<div class="row">
+	<div class="container">
+		<div class="document-container col-md-11">
+			<div id="search-container">
+				<a href="{% url 'home' %}">
+					<img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo"  height="80"/>
+				</a>
+		        <form method="post" action="{% url 'search' %}">
+		            {% csrf_token %}
+			        <div class="search-bar-wrapper">
+				            <input type="text" name="q" id="search-box" class='form-control' value="{{ q }}"/>
+				            <input type="hidden" name="type" id="q_type" value="Figures"/>
+					        <button type="submit" value="Search" class="search-button btn">
+						        <i class="fas fa-search"></i>
+					        </button>
+			        </div>
+		        <br/>
+		        </form>
+			</div>
+	
 			<div style="width: 100%;"><a href="javascript:history.back()">Back to Results</a></div>
-			<h2 id="document-title">{{ title }}</h2>
-			<h5>
-				{% for author in authors %}
-					{{author.name}}
-					{% if forloop.counter < authors|length %}, {% endif %}
-				{% endfor %}
-			</h5>
-		</div>
-		<!--
-		<div class="row">
-			<h3>Authors</h3>
-				<div class="author-container">
+			<div><h1 id="document-title">{{ title }}</h1></div>
+			<div id="authors">
+				<h5>
 					{% for author in authors %}
-					<div class="author">
-						<div class="author-info">
-							<h5>{{ author.name }}</h5>
-							<p>{{ author.institution }}</p>
-							<p>{{ author.laboratory }}</p>
-							<p>{{ author.location.settlement }}, {{ author.location.region }}, {{ author.location.country }}</p>
-						</div>
-					</div>
+						{{author.name}}
+						{% if forloop.counter < authors|length %}, {% endif %}
 					{% endfor %}
-				</div>
-		</div>
-		-->
-		<div class="row">
+				</h5>
+			</div>
+			<a class="btn btn-grey" href="{% url 'document_json' document_id=docId %}"style="margin-left: 0; margin-bottom: 5vh;">View as JSON</a>
+			<!--
+			<div class="row">
+				<h3>Authors</h3>
+					<div class="author-container">
+						{% for author in authors %}
+						<div class="author">
+							<div class="author-info">
+								<h5>{{ author.name }}</h5>
+								<p>{{ author.institution }}</p>
+								<p>{{ author.laboratory }}</p>
+								<p>{{ author.location.settlement }}, {{ author.location.region }}, {{ author.location.country }}</p>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+			</div>
+			-->
 			<div style="width: 100%;"><h3>Abstract</h3></div>
 			<div><p>{{ abstract }}</p></div>
-		</div>
-		<div class="row">
 			<div><h3>Body</h3></div>
-			<div><p>{{ body }}</p></div>
+			<div id="doc-body"><p>{{ body }}</p></div>
+			<a id="show-hide" role="button">Read more</a>
 		</div>
+		<div class="json"></div>
 	</div>
-	<div class="json"></div>
 {% endblock %}
 
 {% block javascript %}
-	<script type="text/javascript" src="{% static 'js/jsonview.js' %}"></script>
 	<script>
-		var data = "{{ json }}";
-		data = data.replace('"', "\"");
-		data = data.replace(/&quot;/g, '"');
+		var height = $('#doc-body')[0].scrollHeight;
+		var show = true;
 		
-		let target = '.json';
-		jsonView.format(data, target);
+		$('#show-hide').click(function(e) {
+		    e.stopPropagation();
+		    $('#doc-body').animate({
+		        'height': height
+		    });
+			$('#show-hide').hide();
+		});
 	</script>
 {% endblock %}

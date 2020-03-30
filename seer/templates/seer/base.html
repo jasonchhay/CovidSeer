@@ -4,9 +4,11 @@
 <html>
 <head>
 	<title>CovidSeer</title>
+	<link rel='icon' href="{% static 'img/favicon.ico' %}" type='image/x-icon'/>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 	<link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap-grid.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/mdb/mdb.lite.css' %}">
 	<link rel="stylesheet" href="{% static 'css/fontawesome-all.css' %}">
 	<link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab&display=swap" rel="stylesheet">
@@ -14,9 +16,11 @@
 </head>
 
 	<div class="header">
-		<a href="https://csxstatic.ist.psu.edu/home" target="_blank">About</a>
+		<a href="{% url 'home' %}">
+			Home
+		</a>
 	  <div class="header-right">
-	    <a  href="{% url 'home' %}">Home</a>
+	    <a href="https://csxstatic.ist.psu.edu/home" target="_blank">About</a>
 	    <a  href="https://csxstatic.ist.psu.edu/people/team" target="_blank">Team</a>
 	    <a href="https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge" target="_blank">Data</a>
 	    <a href="https://csxstatic.ist.psu.edu/contact/" target="_blank">Contact</a>
@@ -39,11 +43,9 @@
 			            </a>
 		            </div>
 		            <p class="footer-links">
-	                    <a href="/privacy-policy">Privacy Policy</a>
+	                    <a href="https://csxstatic.ist.psu.edu/privacy-policy/">Privacy Policy</a>
 	                    ·
-	                    <a href="/help">Help</a>
-	                    ·
-	                    <a href="https://github.com/SeerLabs/CiteSeerX">Source</a>
+	                    <a href="https://csxstatic.ist.psu.edu/help/">Help</a>
 	                    ·
 	                    <a href="/contact">Contact Us</a>
 	                </p>
