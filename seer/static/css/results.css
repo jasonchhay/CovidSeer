@@ -28,5 +28,6 @@
 
 .pager > a, .pager > strong {
     margin: auto .6vw;
+    padding: 7px;
 }
 
