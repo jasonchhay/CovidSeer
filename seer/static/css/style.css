@@ -89,6 +89,10 @@ button.search-button:hover {
     padding: 15vh 0;
 }
 
+#search-container {
+    text-align: center;
+}
+
 .search-form {
     padding-top: 15px;
     padding-bottom: 30px;
