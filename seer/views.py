@@ -31,11 +31,7 @@ def Query(request):
         if q is not None and len(q) > 1:
             return __search(request, q, start)
         else:
-            if q is None:
-                return render(request, 'seer/index.html', {'errormessage': None})
-            else:
-                errormessage = 'Please use larger queries'
-                return render(request, 'seer/index.html', {'errormessage': errormessage})
+            return render(request, 'seer/index.html', {})
     else:
         # it's a get request, can come from two sources. if start=0
         # or start not in GET dictionary, someone is requesting the page
@@ -139,8 +135,8 @@ def __search(request, query, page):
     #print("RESULTS keys", res['hits']['total']['value'])
 
     if not res.get('hits') or len(res) == 0 or res['hits']['total']['value'] == 0:
-        return render(request, 'seer/error.html',
-                      {'errormessage': 'Your query returned zero results, please try another query'})
+        return render(request, 'seer/results.html',
+                      {'q': query, 'errormessage': 'Your query returned zero results, please try another query'})
     else:
         print("search done")
         totalresultsNumFound = res['hits']['total']['value']
@@ -173,7 +169,6 @@ def __search(request, query, page):
                 # f.description = str(result['_source']['meta']['raw']['description'])
                 f.description = ''
                 if 'highlight' in result:
-                    print(result['highlight'])
                     if 'body' in result['highlight']:
                         for desc in result['highlight']['body']:
                             f.description = f.description + desc + '\n'
@@ -222,5 +217,5 @@ def __search(request, query, page):
             return render(request, 'seer/results.html', context)
         else:
             return (
-                request, 'seer/error.html',
-                {'errormessage': 'Your search returned zero results, please try another query'})
+                request, 'seer/results.html',
+                {'q': 'query', 'errormessage': 'Your search returned zero results, please try another query'})
