@@ -28,14 +28,30 @@
 	
 			<div style="width: 100%;"><a href="javascript:history.back()">Back to Results</a></div>
 			<div><h1 id="document-title">{{ title }}</h1></div>
-			<div id="authors">
-				<h5>
-					{% for author in authors %}
-						{{author.name}}
-						{% if forloop.counter < authors|length %}, {% endif %}
-					{% endfor %}
-				</h5>
-			</div>
+			<div class="author-container">
+                {% for author in authors %}
+                    <div class="author">
+	                    {{author.name}}
+                        <div class="author-content">
+	                        <h5>{{ author.name }}</h5>
+	                        <table>
+		                        <tr>
+			                        <th>Location:</th>
+			                        <td>{{ author.location }}</td>
+		                        </tr>
+		                        <tr>
+			                        <th>Institution:</th>
+			                        <td>{{ author.institution }}</td>
+		                        </tr>
+		                        <tr>
+			                        <th>Laboratory:</th>
+			                        <td>{{ author.laboratory }}</td>
+		                        </tr>
+	                        </table>
+                        </div>
+                    </div>{% if forloop.counter < authors|length %}, {% endif %}
+                {% endfor %}
+             </div>
 			<a class="btn btn-grey" href="{% url 'document_json' document_id=docId %}"style="margin-left: 0; margin-bottom: 5vh;">View as JSON</a>
 			<!--
 			<div class="row">
