@@ -23,52 +23,15 @@ def Home(request):
     return render(request, 'seer/index.html')
 
 
-def Query(request):
-    if request.method == 'POST':
-        q = request.POST.get('q', None)
-        start = request.POST.get('page', 1)
+# Formats the list of authors with their metadata
+def __get_author_list(result):
 
-        if q is not None and len(q) > 1:
-            return __search(request, q, start)
-        else:
-            return render(request, 'seer/index.html', {})
-    else:
-        # it's a get request, can come from two sources. if start=0
-        # or start not in GET dictionary, someone is requesting the page
-        # for the first time
-
-        start = int(request.GET.get('page', 1))
-        query = request.GET.get('q', None)
-        if start == 0 or query == None:
-            return render(request, 'seer/index.html')
-        else:
-            return __search(request, query, start)
-
-
-def Document(request, document_id):
-    body = {
-        "query": {
-            "match": {
-                "_id": document_id
-            }
-        }
-    }
-    res = es.search(index=ELASTIC_INDEX, body=body)
-    results = res['hits']['hits']
-
-    if len(results) == 0:
-        raise Http404("Document does not exist")
-
-    result = results[0]
-
-    context = dict()
-    context['docId'] = document_id
-    context['title'] = result['_source']['metadata']['title']
-    context['authors'] = []
+    author_list = []
 
     for data in result['_source']['metadata']['authors']:
         author = dict()
 
+        # Build the name for the author
         first_name = data['first']
         mid_name = data['middle']
 
@@ -80,39 +43,43 @@ def Document(request, document_id):
 
         author['name'] = ' '.join([first_name, last_name, suffix])
 
+        if suffix is None or suffix == '':
+            author['name'] = ' '.join([first_name, last_name])
+            print(first_name)
+        else:
+            author['name'] = ' '.join([first_name, last_name, suffix])
+            print("SUFFIX:", suffix)
+
+        # Build the affiliation of the author
         if len(data['affiliation']) > 0:
-            author['laboratory'] = data['affiliation']['laboratory']
-            author['institution'] = data['affiliation']['institution']
-            author['location'] = data['affiliation']['location']
 
-        context['authors'].append(author)
+            if data['affiliation']['location']:
+                location = data['affiliation']['location']
 
-    abstracts = []
-    for abstract in result['_source']['abstract']:
-        abstracts.append(abstract['text'])
-    context['abstract'] = ' '.join(abstracts)
+                location_list = list()
 
-    context['body'] = result['_source']['body']
-    context['json'] = json.dumps(result, separators=(',', ':'))
+                if 'settlement' in location:
+                    location_list.append(location['settlement'])
+                if 'region' in location:
+                    location_list.append(location['region'])
+                if 'country' in location:
+                    location_list.append(location['country'])
 
-    return render(request, 'seer/document.html', context)
+                author['location'] = ", ".join(location_list)
+            else:
+                author['location'] = 'N/A'
 
+            author['institution'] = data['affiliation']['institution'] or 'N/A'
+            author['laboratory'] = data['affiliation']['laboratory'] or 'N/A'
+        else:
+            author['location'] = 'N/A'
+            author['institution'] = 'N/A'
+            author['laboratory'] = 'N/A'
 
-def DocumentJson(request, document_id):
-    body = {
-        "query": {
-            "match": {
-                "_id": document_id
-            }
-        }
-    }
-    res = es.search(index=ELASTIC_INDEX, body=body)
-    results = res['hits']['hits']
+        print(author)
+        author_list.append(author)
 
-    if len(results) == 0:
-        raise Http404("Document does not exist")
-
-    return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
+    return author_list
 
 
 def __search(request, query, page):
@@ -165,6 +132,7 @@ def __search(request, query, page):
                 f.url = result['_source']['metadata']['title']
 
                 f.title = result['_source']['metadata']['title']
+                f.authors = __get_author_list(result)
 
                 # f.description = str(result['_source']['meta']['raw']['description'])
                 f.description = ''
@@ -219,3 +187,74 @@ def __search(request, query, page):
             return (
                 request, 'seer/results.html',
                 {'q': 'query', 'errormessage': 'Your search returned zero results, please try another query.'})
+
+
+def Query(request):
+    if request.method == 'POST':
+        q = request.POST.get('q', None)
+        start = request.POST.get('page', 1)
+
+        if q is not None and len(q) > 1:
+            return __search(request, q, start)
+        else:
+            return render(request, 'seer/index.html', {})
+    else:
+        # it's a get request, can come from two sources. if start=0
+        # or start not in GET dictionary, someone is requesting the page
+        # for the first time
+
+        start = int(request.GET.get('page', 1))
+        query = request.GET.get('q', None)
+        if start == 0 or query == None:
+            return render(request, 'seer/index.html')
+        else:
+            return __search(request, query, start)
+
+
+def Document(request, document_id):
+    body = {
+        "query": {
+            "match": {
+                "_id": document_id
+            }
+        }
+    }
+    res = es.search(index=ELASTIC_INDEX, body=body)
+    results = res['hits']['hits']
+
+    if len(results) == 0:
+        raise Http404("Document does not exist")
+
+    result = results[0]
+
+    context = dict()
+    context['docId'] = document_id
+    context['title'] = result['_source']['metadata']['title']
+    context['authors'] = __get_author_list(result)
+
+    abstracts = []
+    for abstract in result['_source']['abstract']:
+        abstracts.append(abstract['text'])
+    context['abstract'] = ' '.join(abstracts)
+
+    context['body'] = result['_source']['body']
+    context['json'] = json.dumps(result, separators=(',', ':'))
+
+    return render(request, 'seer/document.html', context)
+
+
+def DocumentJson(request, document_id):
+    body = {
+        "query": {
+            "match": {
+                "_id": document_id
+            }
+        }
+    }
+    res = es.search(index=ELASTIC_INDEX, body=body)
+    results = res['hits']['hits']
+
+    if len(results) == 0:
+        raise Http404("Document does not exist")
+
+    return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")

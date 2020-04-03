@@ -37,11 +37,35 @@
 				{% for hit in results %}
 					{% autoescape off %}
 						<div class="result">
-							
 								<div class="url" >
-							<h5>		<b><a href="{% url 'document' document_id=hit.resultid %}">{{hit.title}}</a></b> </h5>
+									<h5><b><a href="{% url 'document' document_id=hit.resultid %}">{{hit.title}}</a></b> </h5>
 			                        <!--<p>{{ hit.c }} </p></div>-->
-			                        <div class="description" ><p class="small">{{ hit.description }}</p></div>
+									<div class="author-container">
+				                        {% for author in hit.authors %}
+			                                <div class="author small">
+				                                {{author.name}}
+						                        <div class="author-content">
+							                        {{ author.name }}
+							                        <table>
+								                        <tr>
+									                        <th>Location:</th>
+									                        <td>{{ author.location }}</td>
+								                        </tr>
+								                        <tr>
+									                        <th>Institution:</th>
+									                        <td>{{ author.institution }}</td>
+								                        </tr>
+								                        <tr>
+									                        <th>Laboratory:</th>
+									                        <td>{{ author.laboratory }}</td>
+								                        </tr>
+							                        </table>
+						                        </div>
+		                                    </div>{% if forloop.counter < hit.authors|length %}, {% endif %}
+				                        {% endfor %}
+		                             </div>
+									<span class="description"><p class="small">{{ hit.description }}</p></span>
+
 			                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
 			                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
 			                       -->
