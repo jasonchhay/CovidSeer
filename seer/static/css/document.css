@@ -10,7 +10,7 @@ h3 {
     font-weight: 500;
 }
 
-p {
+p, .author-container {
     line-height: 2.4;
 }
 

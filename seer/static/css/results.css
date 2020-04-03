@@ -29,3 +29,45 @@
 .pager > a, .pager > strong {
     margin: auto .6vw;
 }
+
+.author-content th {
+    font-weight: 1000;
+    padding-right: 20px;
+}
+
+.author-content th, .author-content td {
+        padding-top: 10px;
+}
+
+.author {
+    position: relative;
+    display: inline-block;
+    text-decoration: underline;
+}
+
+.author-container {
+    color: #8a8989;
+    margin-bottom: 1em;
+}
+
+.author-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    color: black;
+    width: max-content;
+    padding: 1.5em;
+    z-index: 10;
+    box-shadow: 0px 4px 9px -7px rgb(0,0,0,0.4);
+    border: 1px solid #ced4da;
+    /* transition: .4s ease-out; */
+}
+
+.author:hover .author-content {
+    display: block;
+    /* transition: .4s ease-in; */
+}
+
+.url > h5 {
+    margin-bottom: 0;
+}
