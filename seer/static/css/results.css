@@ -24,8 +24,8 @@
     border-top: 1px solid #ced4da;
 }
 
-.url > h5 {
-    margin-bottom: 0;
+.result-title {
+    margin-bottom: .3rem;
     font-weight: 400;
 }
 
@@ -58,7 +58,7 @@
 
 .author-container {
     color: #8a8989;
-    margin-bottom: .4em;
+    margin-bottom: .6rem;
 }
 
 .author-content {

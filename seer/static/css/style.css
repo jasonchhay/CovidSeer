@@ -204,10 +204,6 @@ em {
     /* transition: .4s ease-out; */
 }
 
-.author-content h5 {
-    font-weight: 500;
-}
-
 .author:hover .author-content {
     display: block;
     /* transition: .4s ease-in; */
