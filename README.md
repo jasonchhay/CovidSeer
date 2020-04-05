@@ -1,6 +1,6 @@
 
-[![N|Solid](http://heisenberg.ist.psu.edu:8000/static/img/icon.png
-)](http://heisenberg.ist.psu.edu:8000/)
+[![N|Solid](http://covidseer.ist.psu.edu/static/img/covidseer_logo.png
+)](http://covidseer.ist.psu.edu/)
 # Powered by -
 [![N|Solid](https://static-www.elastic.co/v3/assets/bltefdd0b53724fa2ce/blt05047fdbe3b9c333/5c11ec1f3312ce2e785d9c30/logo-elastic-elasticsearch-lt.svg)](https://www.elastic.co/)
 
