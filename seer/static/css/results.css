@@ -6,6 +6,10 @@
     margin-left: 10px;
 }
 
+#result-info {
+    margin-bottom: 3vh;
+}
+
 .results-container .col-md-11 {
     margin: auto;
 }
@@ -16,8 +20,13 @@
 }
 
 .url {
-    margin-bottom: 1vh;
-    padding-top: 1.5vh;
+    padding: 3.5vh 0;
+    border-top: 1px solid #ced4da;
+}
+
+.url > h5 {
+    margin-bottom: 0;
+    font-weight: 400;
 }
 
 .pager {
@@ -44,11 +53,12 @@
     position: relative;
     display: inline-block;
     text-decoration: underline;
+    font-size: .9rem;
 }
 
 .author-container {
     color: #8a8989;
-    margin-bottom: 1em;
+    margin-bottom: .4em;
 }
 
 .author-content {
@@ -64,11 +74,15 @@
     /* transition: .4s ease-out; */
 }
 
+.author-content h5 {
+    font-weight: 400;
+}
+
 .author:hover .author-content {
     display: block;
     /* transition: .4s ease-in; */
 }
 
-.url > h5 {
+.description p {
     margin-bottom: 0;
 }

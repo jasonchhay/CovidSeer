@@ -28,11 +28,11 @@
 			        {{ errormessage }}
 			    </div>
 		    {% else %}
-				<div id="result_info">
+				<div id="result-info">
 					Results <strong>{{position}} - {{nextResults}} </strong> of <strong>{{total}}</strong>
 				</div>
 		
-				<div class="result_list">
+				<div class="result-list">
 				{% for hit in results %}
 					{% autoescape off %}
 						<div class="result">
@@ -41,10 +41,10 @@
 			                        <!--<p>{{ hit.c }} </p></div>-->
 									<div class="author-container">
 				                        {% for author in hit.authors %}
-			                                <div class="author small">
-				                                {{author.name}}
+			                                <div class="author">
+				                                <p>{{author.name}}</p>
 						                        <div class="author-content">
-							                        <h5>{{ author.name }}</h5>
+							                        <h4>{{ author.name }}</h4>
 							                        <table>
 								                        <tr>
 									                        <th>Location:</th>
@@ -63,7 +63,7 @@
 		                                    </div>{% if forloop.counter < hit.authors|length %}, {% endif %}
 				                        {% endfor %}
 		                             </div>
-									<span class="description"><p class="small">{{ hit.description }}</p></span>
+									<span class="description"><p>{{ hit.description }}</p></span>
 
 			                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
 			                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
@@ -72,7 +72,7 @@
 				         </div>
 					{% endautoescape%}
 				{% endfor%}
-				<div class="location" ><p class="small">{{ hit.affiliation }}</p></div>
+				<div class="location" ><p>{{ hit.affiliation }}</p></div>
 				</div>
 				
 				<div class="pager">
