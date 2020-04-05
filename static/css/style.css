@@ -4,6 +4,7 @@ n: 0;
 
 body {
     font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    position: absolute;
 }
 
 .container-fluid {
