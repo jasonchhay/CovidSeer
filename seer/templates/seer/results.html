@@ -78,23 +78,23 @@
 				<div class="pager">
 					<span id="prev-page">
 						{% if prevResults != prevPageLimit and prevPage > 0 %}
-						<a href="{% url 'search' %}?q={{q}}&page={{ prevPage }}">Prev</a>
+						<a href="{% url 'search' %}?query={{q}}&page={{ prevPage }}">Prev</a>
 						{% else %}
 						Prev
 						{% endif %}
 					</span>
 					
 					{% for i in prevPageList %}
-						<a href="{% url 'search' %}?q={{q}}&page={{ i }}">{{ i }}</a>
+						<a href="{% url 'search' %}?query={{q}}&page={{ i }}">{{ i }}</a>
 					{% endfor %}
 					<strong>{{ page }}</strong>
 					{% for i in nextPageList %}
-						<a href="{% url 'search' %}?q={{q}}&page={{ i }}">{{ i }}</a>
+						<a href="{% url 'search' %}?query={{q}}&page={{ i }}">{{ i }}</a>
 					{% endfor %}
 					
 					<span id="next-page">
 						{% if nextResults != nextPageLimit and nextPage <= nextPageLimit %}
-						<a href="{% url 'search' %}?q={{q}}&page={{ nextPage }}">Next</a>
+						<a href="{% url 'search' %}?query={{q}}&page={{ nextPage }}">Next</a>
 						{% else %}
 						Next
 						{% endif %}
