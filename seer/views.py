@@ -53,6 +53,7 @@ def __get_author_list(result):
         # Build the affiliation of the author
         if len(data['affiliation']) > 0:
 
+            # Build the geographic location of the author
             if data['affiliation']['location']:
                 location = data['affiliation']['location']
 
@@ -190,25 +191,14 @@ def __search(request, query, page):
 
 
 def Query(request):
-    if request.method == 'POST':
-        q = request.POST.get('q', None)
-        start = request.POST.get('page', 1)
+    if request.method == 'GET':
+        q = request.GET.get('query')
+        start = int(request.GET.get('page', 1))
 
         if q is not None and len(q) > 1:
             return __search(request, q, start)
         else:
             return render(request, 'seer/index.html', {})
-    else:
-        # it's a get request, can come from two sources. if start=0
-        # or start not in GET dictionary, someone is requesting the page
-        # for the first time
-
-        start = int(request.GET.get('page', 1))
-        query = request.GET.get('q', None)
-        if start == 0 or query == None:
-            return render(request, 'seer/index.html')
-        else:
-            return __search(request, query, start)
 
 
 def Document(request, document_id):

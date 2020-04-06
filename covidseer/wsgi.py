@@ -18,7 +18,7 @@ sys.path.append(BASE_DIR)
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'covidseer.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'covidseer.settings.production')
 
 application = get_wsgi_application()
 

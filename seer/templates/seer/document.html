@@ -13,11 +13,10 @@
 				<a href="{% url 'home' %}">
 					<img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo"  height="80"/>
 				</a>
-		        <form method="post" action="{% url 'search' %}">
-		            {% csrf_token %}
+		        <form method="GET" action="{% url 'search' %}">
 			        <div class="search-bar-wrapper">
-				            <input type="text" name="q" id="search-box" class='form-control' value="{{ q }}"/>
-				            <input type="hidden" name="type" id="q_type" value="Figures"/>
+				            <input type="text" name="query" id="search-box" class='form-control' value="{{ q }}"/>
+				            <!-- <input type="hidden" name="type" id="q_type" value="Figures"/> -->
 					        <button type="submit" value="Search" class="search-button btn">
 						        <i class="fas fa-search"></i>
 					        </button>
@@ -31,9 +30,9 @@
 			<div class="author-container">
                 {% for author in authors %}
                     <div class="author">
-	                    {{author.name}}
+	                    <p>{{author.name}}</p>
                         <div class="author-content">
-	                        <h5>{{ author.name }}</h5>
+	                        <h4>{{ author.name }}</h4>
 	                        <table>
 		                        <tr>
 			                        <th>Location:</th>
