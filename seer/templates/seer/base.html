@@ -4,14 +4,16 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>COVIDSeer</title>
 	<meta name="keywords" content="COVID-19, coronavirus, research, search engine, academic, virus">
     <meta name="viewport" content="width=device-width">
 
-	<meta property="og:site-name" content="COVIDSeer">
-	<meta property="og:description" content="COVID-19 Open Research Search Engine hosted by Penn State">
-	<meta property="og:image" content="{% static 'img/favicon.ico' %}">
-	
+	<title>COVIDSeer</title>
+	<meta prefix="og: http://ogp.me/ns#" property="og:type" content="website">
+	<meta prefix="og: http://ogp.me/ns#" property="og:title" content="COVIDSeer">
+	<meta prefix="og: http://ogp.me/ns#" property="og:description" content="COVID-19 Open Research Search Engine hosted by Penn State">
+	<meta prefix="og: http://ogp.me/ns#" property="og:image" content="{% static 'img/covidseer_logo.png' %}">
+	<meta prefix="og: http://ogp.me/ns#" property="og:url" content="https://covidseer.ist.psu.edu/">
+
 	<link rel='icon' href="{% static 'img/favicon.ico' %}" type='image/x-icon'/>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 	<link rel="stylesheet" href="{% static 'css/footer.css' %}">
