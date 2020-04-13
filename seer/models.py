@@ -5,7 +5,8 @@ from django.db import models
 
 class SearchResult:
     def __init__(self, resultid, content="No content found", fileurl="No URL found", title="No title found",
-                 authors="No authors available", description="No description found", affiliation="No location found"):
+                 authors="No authors available", description="No description found", affiliation="No location found",
+                 doi=""):
         self.resultid = resultid
         self.content = content
         self.fileurl = fileurl
@@ -13,3 +14,4 @@ class SearchResult:
         self.authors = authors
         self.description = description
         self.affiliation = affiliation
+        self.doi = doi

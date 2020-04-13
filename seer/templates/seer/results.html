@@ -7,7 +7,7 @@
 
 {% block content %}
 	<div class="container">
-		<div class="results-container col-md-11">
+		<div class="results-container">
 			<div id="search-container">
 				<a href="{% url 'home' %}">
 					<img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo"  height="80"/>
@@ -64,7 +64,8 @@
 				                        {% endfor %}
 		                             </div>
 									<span class="description"><p>{{ hit.description }}</p></span>
-
+									<!--<div class="doi-link"><a href="https://doi.org/{{ hit.doi }}" target="_blank">View Full Article</a></div>-->
+									
 			                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
 			                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
 			                       -->

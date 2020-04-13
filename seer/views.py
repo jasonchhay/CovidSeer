@@ -10,7 +10,7 @@ ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
 
 # USER = open("elastic-settings.txt").read().split("\n")[1]
 # PASSWORD = open("elastic-settings.txt").read().split("\n")[2]
-ELASTIC_INDEX = 'cord'
+ELASTIC_INDEX = 'cord_meta'
 
 # open connection to Elastic
 es = Elasticsearch(['http://csxindex05:9200/'], verify_certs=True)
@@ -92,11 +92,11 @@ def __search(request, query, page):
         "query": {
             "multi_match": {
                 "query": query,
-                "fields":  ["body","abstract.text^2", "metadata.title^3"],
+                "fields":  ["body_text","abstract^2", "metadata.title^3"],
             }
 
         },
-        'highlight': {'fields': {'body': {}, 'abstract.text': {}}}
+        'highlight': {'fields': {'body_text': {}, 'abstract.text': {}}}
     }
     res = es.search(index=ELASTIC_INDEX, body=body)
     #print("RESULTS", res)
@@ -121,7 +121,7 @@ def __search(request, query, page):
                 if len(f.title) == 0:
                     continue
 
-                f.content = result['_source']['body']
+                f.content = result['_source']['body_text']
                 if len(result['_source']['metadata']['authors'])>0:
                     if 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
                         f.affiliation = result['_source']['metadata']['authors'][0]['affiliation']['location']
@@ -138,8 +138,8 @@ def __search(request, query, page):
                 # f.description = str(result['_source']['meta']['raw']['description'])
                 f.description = ''
                 if 'highlight' in result:
-                    if 'body' in result['highlight']:
-                        for desc in result['highlight']['body']:
+                    if 'body_text' in result['highlight']:
+                        for desc in result['highlight']['body_text']:
                             f.description = f.description + desc + '\n'
 
                 # f.description = " ".join(f.description).encode("utf-8")
@@ -149,6 +149,8 @@ def __search(request, query, page):
                 '''
                 # trying to use the location field to get the file name to display the image
                 # f.filename= str(imageid)+'.png'
+                f.doi = result['_source']['doi']
+
                 SearchResults.append(f)
 
             context = dict()
@@ -222,12 +224,9 @@ def Document(request, document_id):
     context['title'] = result['_source']['metadata']['title']
     context['authors'] = __get_author_list(result)
 
-    abstracts = []
-    for abstract in result['_source']['abstract']:
-        abstracts.append(abstract['text'])
-    context['abstract'] = ' '.join(abstracts)
-
-    context['body'] = result['_source']['body']
+    context['abstract'] = result['_source']['abstract']
+    context['body'] = result['_source']['body_text']
+    context['doi'] = result['_source']['doi']
     context['json'] = json.dumps(result, separators=(',', ':'))
 
     return render(request, 'seer/document.html', context)
