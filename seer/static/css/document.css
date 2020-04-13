@@ -69,4 +69,8 @@ p, .author-container {
     transition: all 0.2s ease-in-out;
 }
 
-
+.btn {
+    margin-left: 0;
+    margin-right: 1em;
+    margin-bottom: 5vh;
+}
