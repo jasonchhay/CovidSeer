@@ -186,8 +186,12 @@ em {
     margin-bottom: 0;
 }
 
-.author-container {
+.author-container, .journal, .source {
     color: #8a8989;
+    font-weight: 400;
+}
+
+.author-container{
     margin-bottom: 1em;
 }
 
