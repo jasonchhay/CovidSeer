@@ -63,8 +63,22 @@
 		                                    </div>{% if forloop.counter < hit.authors|length %}, {% endif %}
 				                        {% endfor %}
 		                             </div>
-									<span class="description"><p>{{ hit.description }}</p></span>
-									<!--<div class="doi-link"><a href="https://doi.org/{{ hit.doi }}" target="_blank">View Full Article</a></div>-->
+									<span class="description row">
+										<div class="col-md-12">
+											<p>{{ hit.description }}</p>
+										</div>
+									</span>
+									<div class="journal row">
+										<div class="col-md-12"><b>Journal:</b> {{ hit.journal }}</div>
+									</div>
+									<div class="source row">
+										<div class="col-md-6">
+											<b>Source:</b> {{ hit.source }}
+										</div>
+										<div class="col-md-6 doi-link">
+											<a href="https://doi.org/{{ hit.doi }}" target="_blank" class="doi-link">View full article</a>
+										</div>
+									</div>
 									
 			                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
 			                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>

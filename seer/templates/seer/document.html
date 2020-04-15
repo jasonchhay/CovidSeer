@@ -50,9 +50,22 @@
                         </div>
                     </div>{% if forloop.counter < authors|length %}, {% endif %}
                 {% endfor %}
-             </div>
-			<a class="btn btn-primary" href="https://doi.org/{{ doi }}" target="_blank">View Full Article</a>
-			<a class="btn btn-grey" href="{% url 'document_json' document_id=docId %}">View as JSON</a>
+			</div>
+			<div class="journal row">
+				<div class="col-md-12"><b>Journal:</b> {{ journal }}</div>
+			</div>
+			<div class="source row">
+				<div class="col-md-12">
+					<b>Source:</b> {{ source }}
+				</div>
+			</div>
+			
+			<div class="row" id="btn-container">
+				<div class="col-md-12">
+					<button class="btn btn-primary" href="https://doi.org/{{ doi }}" target="_blank">View Full Article</button>
+					<button class="btn btn-grey" href="{% url 'document_json' document_id=docId %}">View as JSON</button>
+				</div>
+			</div>
 			<!--
 			<div class="row">
 				<h3>Authors</h3>

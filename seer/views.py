@@ -150,7 +150,9 @@ def __search(request, query, page):
                 # trying to use the location field to get the file name to display the image
                 # f.filename= str(imageid)+'.png'
                 f.doi = result['_source']['doi']
-
+                f.source = result['_source']['source_x']
+                f.journal = result['_source']['journal']
+                
                 SearchResults.append(f)
 
             context = dict()
@@ -228,6 +230,9 @@ def Document(request, document_id):
     context['body'] = result['_source']['body_text']
     context['doi'] = result['_source']['doi']
     context['json'] = json.dumps(result, separators=(',', ':'))
+
+    context['source'] = result['_source']['source_x']
+    context['journal'] = result['_source']['journal']
 
     return render(request, 'seer/document.html', context)
 
