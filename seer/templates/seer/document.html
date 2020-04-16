@@ -62,8 +62,8 @@
 			
 			<div class="row" id="btn-container">
 				<div class="col-md-12">
-					<button class="btn btn-primary" href="https://doi.org/{{ doi }}" target="_blank">View Full Article</button>
-					<button class="btn btn-grey" href="{% url 'document_json' document_id=docId %}">View as JSON</button>
+					<a class="btn btn-primary" href="https://doi.org/{{ doi }}" target="_blank">View Full Article</a>
+					<a class="btn btn-grey" href="{% url 'document_json' document_id=docId %}" target="_blank">View as JSON</a>
 				</div>
 			</div>
 			<!--
