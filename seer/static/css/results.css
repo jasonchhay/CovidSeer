@@ -20,7 +20,7 @@
 }
 
 .url {
-    padding: 3.5vh 0 1.5vh 0;
+    padding: 3.5vh 0;
     border-top: 1px solid #ced4da;
 }
 
@@ -58,7 +58,7 @@
 
 .author-container {
     color: #8a8989;
-    margin-bottom: 0.1em
+    margin-bottom: .6rem;
 }
 
 .author-content {
@@ -84,21 +84,58 @@
 }
 
 .description p {
-    margin-bottom: 1em;
+    margin-bottom: 0;
 }
 
-.journal, .source {
-    color: #8a8989;
+.accordion.md-accordion
+{
+    margin: 0;
+    display: inline-block;
+    margin-bottom: .3rem;
     font-weight: 400;
-    font-size: .9em;
+    font-size: 1rem;
+    vertical-align: top;
+    position: fixed;
+    top: 30%;
+    right: 2%
+    
 }
-
-.journal {
-    margin-bottom: .1em;
-}
-
-.doi-link {
-    font-weight: 500;
-    text-align: right;
+ui.checkbox {
+    position: relative;
+    display: inline-block;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    outline: none;
+    vertical-align: initial;
+    font-style: normal;
+    min-height: 17px;
     font-size: 1em;
+    line-height: 17px;
+    min-width: 17px;
 }
+.filters.button {
+    color: rgb(81, 171, 226);
+    width: 5%;
+    
+}
+
+.filters.form,
+.filters.form .field  {
+  font-size: 1rem;
+  vertical-align: top;
+  font-weight: 400;
+
+}
+
+@media screen and (min-width: 1024px){
+    .collapse {
+        display: block;
+        height: auto !important;
+        visibility: visible;
+      }
+      .collapsing{
+        position: relative;
+        height: unset !important;
+        overflow: hidden;
+      }
+  }

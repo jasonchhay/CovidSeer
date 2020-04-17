@@ -7,8 +7,8 @@
 
 {% block content %}
 	<div class="container">
-		<div class="results-container">
-			<div id="search-container">
+		<div class="results-container" >
+			<div id="search-container" >
 				<a href="{% url 'home' %}">
 					<img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo"  height="80"/>
 				</a>
@@ -63,22 +63,8 @@
 		                                    </div>{% if forloop.counter < hit.authors|length %}, {% endif %}
 				                        {% endfor %}
 		                             </div>
-									<span class="description row">
-										<div class="col-md-12">
-											<p>{{ hit.description }}</p>
-										</div>
-									</span>
-									<div class="journal row">
-										<div class="col-md-12"><b>Journal:</b> {{ hit.journal }}</div>
-									</div>
-									<div class="source row">
-										<div class="col-md-6">
-											<b>Source:</b> {{ hit.source }}
-										</div>
-										<div class="col-md-6 doi-link">
-											<a href="https://doi.org/{{ hit.doi }}" target="_blank" class="doi-link">View full article</a>
-										</div>
-									</div>
+									<span class="description"><p>{{ hit.description }}</p></span>
+									<!--<div class="doi-link"><a href="https://doi.org/{{ hit.doi }}" target="_blank">View Full Article</a></div>-->
 									
 			                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
 			                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
@@ -88,7 +74,7 @@
 					{% endautoescape%}
 				{% endfor%}
 				<div class="location" ><p>{{ hit.affiliation }}</p></div>
-				</div>
+				</div>	
 				
 				<div class="pager">
 					<span id="prev-page">
@@ -117,5 +103,169 @@
 				</div>
 			{% endif %}
 		</div>
+		
 	</div>
+	
+	
 {% endblock %}
+
+{% block filters %} 
+<!--Accordion wrapper-->
+<div class="accordion md-accordion" id="accordionEx" role="tablist" aria-multiselectable="true" >
+
+	<!-- Accordion card -->
+	<div class="card ">
+	  <!-- Card header -->
+	  <div class="card-header" role="tab" id="headingOne1">
+		<a data-toggle="collapse" data-parent="#accordionEx" href="#collapseOne1" aria-expanded="true"
+		  aria-controls="collapseOne1">
+		  <h5 class="mb-0">
+			Source  ({{uniq_sources}})	<i class="fas fa-angle-down rotate-icon"></i>
+		  </h5>
+		</a>
+	  </div>
+  
+	  <!-- Card body -->
+	  <div id="collapseOne1" class="collapse show" role="tabpanel" aria-labelledby="headingOne1"
+		data-parent="#accordionEx">
+		<div class="card-body">
+			{% for src in sources %}
+			<div class="ui checked checkbox sc-htoDjs kkNfCQ">
+			<input class="hidden" name="Source" readonly="" tabindex="0" type="checkbox" value="{{src.name}}"  urls="{% url 'search' %}?query={{q}}&source=Elsevier" onclick="windows.location.assign(urls)">
+					<label>{{src.name}}  ({{src.count}})</label>
+			</div>{% if forloop.counter < sources|length %} {% endif %}
+			{% endfor %}
+		</div>
+	  </div>
+  
+	</div>
+	<!-- Accordion card -->
+  
+	<!-- Accordion card -->
+	<div class="card">
+  
+	  <!-- Card header -->
+	  <div class="card-header" role="tab" id="headingTwo2">
+		<a class="collapsed" data-toggle="collapse" data-parent="#accordionEx" href="#collapseTwo2"
+		  aria-expanded="false" aria-controls="collapseTwo2">
+		  <h5 class="mb-0">
+			Journal  ({{uniq_journals}})<i class="fas fa-angle-down rotate-icon"></i>
+		  </h5>
+		</a>
+	  </div>
+  
+	  <!-- Card body -->
+	  <div id="collapseTwo2" class="collapse" role="tabpanel" aria-labelledby="headingTwo2"
+		data-parent="#accordionEx">
+		<div class="card-body">
+			{% for jnl in journals %}
+			<div class="ui checked checkbox ">
+				<input class="hidden" name="Journal" readonly="" tabindex="0" type="checkbox" >
+					<label>{{jnl.name}}  ({{jnl.count}})</label>
+			</div>{% if forloop.counter < journals|length %} {% endif %}
+			{% endfor %}
+		</div>
+	  </div>
+  
+	</div>
+	<!-- Accordion card -->
+	<div class="card ">
+	  <!-- Card header -->
+	  <div class="card-header" role="tab" id="headingOne1">
+		<a data-toggle="collapse" data-parent="#accordionEx" href="#collapseOne3" aria-expanded="true"
+		  aria-controls="collapseOne3">
+		  <h5 class="mb-0">
+			Author  ({{uniq_authors}})    <i class="fas fa-angle-down rotate-icon"></i>
+		  </h5>
+		</a>
+	  </div>
+  
+	  <!-- Card body -->
+	  <div id="collapseOne3" class="collapse show" role="tabpanel" aria-labelledby="headingOne1"
+		data-parent="#accordionEx">
+		<div class="card-body">
+			{% for auth in authors %}
+			<div class="ui checked checkbox ">
+			<input class="hidden" name="Author" readonly="" tabindex="0" type="checkbox" value="{{auth.name}}" >
+					<label>{{auth.name}}  ({{auth.count}})</label>
+			</div>{% if forloop.counter < authors|length %} {% endif %}
+			{% endfor %}
+		</div>
+	  </div>
+  
+	</div>
+	<!-- Accordion card -->
+
+	<!-- Accordion card -->
+	<div class="card">
+  
+	  <!-- Card header -->
+	  <div class="card-header" role="tab" id="headingThree3">
+		<a class="collapsed" data-toggle="collapse" data-parent="#accordionEx" href="#collapseThree4"
+		  aria-expanded="false" aria-controls="collapseThree4">
+		  <h5 class="mb-0">
+			Full Text ({{total}}) <i class="fas fa-angle-down rotate-icon"></i>
+		  </h5>
+		</a>
+	  </div>
+  
+	  <!-- Card body -->
+	  <div id="collapseThree4" class="collapse" role="tabpanel" aria-labelledby="headingThree3"
+		data-parent="#accordionEx">
+		<div class="card-body">
+			<div class="ui checkbox ">
+				<input class="hidden" name="Full text" readonly="" tabindex="0" type="checkbox" value="false">
+				<label>false ({{no_fulltext}})</label>
+			</div>
+			<div class="ui checkbox ">
+				<input class="hidden" name="Full text" readonly="" tabindex="0" type="checkbox" value="true">
+				<label>true ({{ fulltext_available }})</label>
+			</div>
+		</div>
+	  </div>
+  
+	</div>
+	<!-- Accordion card -->
+	<div class="card ">
+		<!-- Card header -->
+		<div class="card-header" role="tab" id="headingOne1">
+		  <a data-toggle="collapse" data-parent="#accordionEx" href="#collapseOne5" aria-expanded="true"
+			aria-controls="collapseOne5">
+			<h5 class="mb-0">
+			  Abstract  ({{total}})    <i class="fas fa-angle-down rotate-icon"></i>
+			</h5>
+		  </a>
+		</div>
+	
+		<!-- Card body -->
+		<div id="collapseOne5" class="collapse show" role="tabpanel" aria-labelledby="headingOne1"
+		  data-parent="#accordionEx">
+		  <div class="card-body">
+			<div class="ui checkbox ">
+				<input class="hidden" name="Full text" readonly="" tabindex="0" type="checkbox" value="false">
+				<label>false ({{no_abstract}})</label>
+			</div>
+			<div class="ui checkbox ">
+				<input class="hidden" name="Full text" readonly="" tabindex="0" type="checkbox" value="true">
+				<label>true ({{ abstract_available }})</label>
+			</div>
+		  </div>
+		</div>
+	
+	  </div>
+  
+  </div>
+  <!-- Accordion wrapper -->
+  
+
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        function loadURL() {
+            let query = document.getElementById("search-box").value;
+            return "{% url 'search' %}?query=" + query;
+        }
+    </script>
+{% endblock %}
+
