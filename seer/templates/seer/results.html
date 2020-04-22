@@ -23,99 +23,130 @@
 		        <br/>
 		        </form>
 			</div>
-			{% if errormessage %}
-			    <div id="navwrapper" style="margin-bottom: 20vh; font-weight: 800;">
-			        {{ errormessage }}
-			    </div>
-		    {% else %}
-				<div id="result-info">
-					Results <strong>{{position}} - {{nextResults}} </strong> of <strong>{{total}}</strong>
-				</div>
-		
-				<div class="result-list">
-				{% for hit in results %}
-					{% autoescape off %}
-						<div class="result">
-								<div class="url" >
-									<h5 class="result-title"><b><a href="{% url 'document' document_id=hit.resultid %}">{{hit.title}}</a></b> </h5>
-			                        <!--<p>{{ hit.c }} </p></div>-->
-									<div class="author-container">
-				                        {% for author in hit.authors %}
-			                                <div class="author">
-				                                <p>{{author.name}}</p>
-						                        <div class="author-content">
-							                        <h4>{{ author.name }}</h4>
-							                        <table>
-								                        <tr>
-									                        <th>Location:</th>
-									                        <td>{{ author.location }}</td>
-								                        </tr>
-								                        <tr>
-									                        <th>Institution:</th>
-									                        <td>{{ author.institution }}</td>
-								                        </tr>
-								                        <tr>
-									                        <th>Laboratory:</th>
-									                        <td>{{ author.laboratory }}</td>
-								                        </tr>
-							                        </table>
-						                        </div>
-		                                    </div>{% if forloop.counter < hit.authors|length %}, {% endif %}
-				                        {% endfor %}
-		                             </div>
-									<span class="description row">
-										<div class="col-md-12">
-											<p>{{ hit.description }}</p>
+			<div class="row">
+				<div class="col-md-9">
+					<div class="result-list">
+						{% if errormessage %}
+					    <div id="navwrapper" style="margin-bottom: 20vh; font-weight: 800;">
+					        {{ errormessage }}
+					    </div>
+				        {% else %}
+						<div id="result-info">
+							Results <strong>{{position}} - {{nextResults}} </strong> of <strong>{{total}}</strong>
+						</div>
+						
+						{% for hit in results %}
+							{% autoescape off %}
+								<div class="result">
+										<div class="url" >
+											<h5 class="result-title"><b><a href="{% url 'document' document_id=hit.resultid %}">{{hit.title}}</a></b> </h5>
+					                        <!--<p>{{ hit.c }} </p></div>-->
+											<div class="author-container">
+						                        {% for author in hit.authors %}
+					                                <div class="author">
+						                                <p>{{author.name}}</p>
+								                        <div class="author-content">
+									                        <h4>{{ author.name }}</h4>
+									                        <table>
+										                        <tr>
+											                        <th>Location:</th>
+											                        <td>{{ author.location }}</td>
+										                        </tr>
+										                        <tr>
+											                        <th>Institution:</th>
+											                        <td>{{ author.institution }}</td>
+										                        </tr>
+										                        <tr>
+											                        <th>Laboratory:</th>
+											                        <td>{{ author.laboratory }}</td>
+										                        </tr>
+									                        </table>
+								                        </div>
+				                                    </div>{% if forloop.counter < hit.authors|length %}, {% endif %}
+						                        {% endfor %}
+				                             </div>
+											<span class="description row">
+												<div class="col-md-12">
+													<p>{{ hit.description }}</p>
+												</div>
+											</span>
+											<div class="journal row">
+												<div class="col-md-12"><b>Journal:</b> {{ hit.journal }}</div>
+											</div>
+											<div class="source row">
+												<div class="col-md-6">
+													<b>Source:</b> {{ hit.source }}
+												</div>
+												<div class="col-md-6 doi-link">
+													<a href="https://doi.org/{{ hit.doi }}" target="_blank" class="doi-link">View full article</a>
+												</div>
+											</div>
+											
+					                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
+					                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
+					                       -->
 										</div>
-									</span>
-									<div class="journal row">
-										<div class="col-md-12"><b>Journal:</b> {{ hit.journal }}</div>
-									</div>
-									<div class="source row">
-										<div class="col-md-6">
-											<b>Source:</b> {{ hit.source }}
-										</div>
-										<div class="col-md-6 doi-link">
-											<a href="https://doi.org/{{ hit.doi }}" target="_blank" class="doi-link">View full article</a>
-										</div>
-									</div>
-									
-			                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
-			                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
-			                       -->
-								</div>
-				         </div>
-					{% endautoescape%}
-				{% endfor%}
-				<div class="location" ><p>{{ hit.affiliation }}</p></div>
+						         </div>
+							{% endautoescape%}
+						{% endfor%}
+						<div class="location" ><p>{{ hit.affiliation }}</p></div>
+						</div>
+						
+						<div class="pager">
+							<span id="prev-page">
+								{% if prevResults != prevPageLimit and prevPage > 0 %}
+								<a href="{% url 'search' %}?query={{q}}&page={{ prevPage }}">Prev</a>
+								{% else %}
+								Prev
+								{% endif %}
+							</span>
+							
+							{% for i in prevPageList %}
+								<a href="{% url 'search' %}?query={{q}}&page={{ i }}">{{ i }}</a>
+							{% endfor %}
+							<strong>{{ page }}</strong>
+							{% for i in nextPageList %}
+								<a href="{% url 'search' %}?query={{q}}&page={{ i }}">{{ i }}</a>
+							{% endfor %}
+							
+							<span id="next-page">
+								{% if nextResults != nextPageLimit and nextPage <= nextPageLimit %}
+								<a href="{% url 'search' %}?query={{q}}&page={{ nextPage }}">Next</a>
+								{% else %}
+								Next
+								{% endif %}
+							</span>
+						</div>
+					{% endif %}
+					</div>
+					<div class="filter-box col-md-3" style="background-color: red;">
+						<h5>Filter results</h5>
+						<a class="btn btn-primary" data-toggle="collapse" href="#source-collapse" role="button" aria-expanded="false" aria-controls="author-collapse">
+							Source
+						</a>
+						<form method="GET" action="{% url 'search' %}">
+							<div class="collapse" id="source-collapse">
+								<input type="hidden" name="query" value="{{ q }}"/>
+							    <input type="checkbox" name="author-filter" class="form-check-input" id="checkbox1" value="Author1" />
+							    <label class="form-check-label" for="checkbox1">Check me out</label>
+								
+								<input type="checkbox" name="author-filter" class="form-check-input" id="checkbox2" value="Author2" />
+								<label class="form-check-label" for="checkbox2">TEST 2</label>
+
+							</div>
+							<input type="submit" value="Submit">
+						</form>
+
+						<a class="btn btn-primary" data-toggle="collapse" href="#author-collapse" role="button" aria-expanded="false" aria-controls="author-collapse">
+							Authors
+						</a>
+						<div class="collapse" id="author-collapse">
+							  <div class="card card-body">
+								  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+							  </div>
+						</div>
+					</div>
 				</div>
-				
-				<div class="pager">
-					<span id="prev-page">
-						{% if prevResults != prevPageLimit and prevPage > 0 %}
-						<a href="{% url 'search' %}?query={{q}}&page={{ prevPage }}">Prev</a>
-						{% else %}
-						Prev
-						{% endif %}
-					</span>
-					
-					{% for i in prevPageList %}
-						<a href="{% url 'search' %}?query={{q}}&page={{ i }}">{{ i }}</a>
-					{% endfor %}
-					<strong>{{ page }}</strong>
-					{% for i in nextPageList %}
-						<a href="{% url 'search' %}?query={{q}}&page={{ i }}">{{ i }}</a>
-					{% endfor %}
-					
-					<span id="next-page">
-						{% if nextResults != nextPageLimit and nextPage <= nextPageLimit %}
-						<a href="{% url 'search' %}?query={{q}}&page={{ nextPage }}">Next</a>
-						{% else %}
-						Next
-						{% endif %}
-					</span>
-				</div>
-			{% endif %}
-		</div>
+			</div>
 	</div>
 {% endblock %}

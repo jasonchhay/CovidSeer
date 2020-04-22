@@ -92,7 +92,7 @@ def __search(request, query, page):
         "query": {
             "multi_match": {
                 "query": query,
-                "fields":  ["body_text","abstract^2", "metadata.title^3"],
+                "fields":  ["body_text","abstract", "metadata.title"],
             }
 
         },
