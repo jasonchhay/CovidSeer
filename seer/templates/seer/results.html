@@ -7,8 +7,8 @@
 
 {% block content %}
 	<div class="container">
-		<div class="results-container">
-			<div id="search-container">
+		<div class="results-container" >
+			<div id="search-container" >
 				<a href="{% url 'home' %}">
 					<img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo"  height="80"/>
 				</a>
@@ -24,7 +24,7 @@
 		        </form>
 			</div>
 			<div class="row">
-				<div class="col-md-9">
+				<div class="col-md-8">
 					<div class="result-list">
 						{% if errormessage %}
 					    <div id="navwrapper" style="margin-bottom: 20vh; font-weight: 800;">
@@ -119,34 +119,91 @@
 						</div>
 					{% endif %}
 					</div>
-					<div class="filter-box col-md-3" style="background-color: red;">
-						<h5>Filter results</h5>
-						<a class="btn btn-primary" data-toggle="collapse" href="#source-collapse" role="button" aria-expanded="false" aria-controls="author-collapse">
-							Source
-						</a>
-						<form method="GET" action="{% url 'search' %}">
-							<div class="collapse" id="source-collapse">
-								<input type="hidden" name="query" value="{{ q }}"/>
-							    <input type="checkbox" name="author-filter" class="form-check-input" id="checkbox1" value="Author1" />
-							    <label class="form-check-label" for="checkbox1">Check me out</label>
+					<div class="filter-box col-md-4">
+						<div class="card">
+							<h5 class="card-header">
+								Filter results
+							</h5>
+							<div class="card-body">
+
+								<a class="collapsed" data-toggle="collapse" href="#collapseOne1" aria-expanded="false" aria-controls="collapseOne1">
+									<h5>
+										Source  ({{uniq_sources}})	<i class="fas fa-angle-down rotate-icon"></i>
+									</h5>
+								</a>
+								<div id="collapseOne1" class="collapse" role="tabpanel" aria-labelledby="headingOne1">
+									{% for src in sources %}
+									<div class="ui checked checkbox">
+									<input class="hidden" name="Source" readonly="" tabindex="0" type="checkbox" value="{{src.name}}"  urls="{% url 'search' %}?query={{q}}&source=Elsevier" onclick="windows.location.assign(urls)">
+											<label>{{src.name}}  ({{src.count}})</label>
+									</div>
+									{% endfor %}
+								</div>								
+
+								<a class="collapsed" data-toggle="collapse" href="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo2">
+									<h5>
+									Journal  ({{uniq_journals}})<i class="fas fa-angle-down rotate-icon"></i>
+									</h5>
+								</a>
+								<div id="collapseTwo2" class="collapse" role="tabpanel" aria-labelledby="headingTwo2">
+									{% for jnl in journals %}
+									<div class="ui checked checkbox ">
+										<input class="hidden" name="Journal" readonly="" tabindex="0" type="checkbox" >
+											<label>{{jnl.name}}  ({{jnl.count}})</label>
+									</div>
+									{% endfor %}
+								</div>
+
+								<a data-toggle="collapse" href="#collapseOne3" aria-expanded="true" aria-controls="collapseOne3">
+									<h5>
+									Author  ({{uniq_authors}})    <i class="fas fa-angle-down rotate-icon"></i>
+									</h5>
+								</a>	
+								<div id="collapseOne3" class="collapse" role="tabpanel" aria-labelledby="headingOne1">
+									{% for auth in authors %}
+									<div class="ui checked checkbox ">
+									<input class="hidden" name="Author" readonly="" tabindex="0" type="checkbox" value="{{auth.name}}" >
+											<label>{{auth.name}}  ({{auth.count}})</label>
+									</div>{% if forloop.counter < authors|length %} {% endif %}
+									{% endfor %}								
+								</div>
+
+								<a class="collapsed" data-toggle="collapse" href="#collapseThree4" aria-expanded="false" aria-controls="collapseThree4">
+									<h5>
+									Full Text ({{total}}) <i class="fas fa-angle-down rotate-icon"></i>
+									</h5>
+								</a>
+								<div id="collapseThree4" class="collapse" role="tabpanel" aria-labelledby="headingThree3">
+									<div class="ui checkbox ">
+										<input class="hidden" name="Full text" readonly="" tabindex="0" type="checkbox" value="false">
+										<label>false ({{no_fulltext}})</label>
+									</div>
+									<div class="ui checkbox ">
+										<input class="hidden" name="Full text" readonly="" tabindex="0" type="checkbox" value="true">
+										<label>true ({{ fulltext_available }})</label>
+									</div>
+								</div>
+
+								<a class="button" data-toggle="collapse" href="#collapseOne5" aria-expanded="true" aria-controls="collapseOne5">
+									<h5>
+										Abstract  ({{total}})    <i class="fas fa-angle-down rotate-icon"></i>
+									</h5>
+								</a>
 								
-								<input type="checkbox" name="author-filter" class="form-check-input" id="checkbox2" value="Author2" />
-								<label class="form-check-label" for="checkbox2">TEST 2</label>
-
+								<div id="collapseOne5" class="collapse" role="tabpanel" aria-labelledby="headingOne1">
+									<div class="ui checkbox ">
+										<input class="hidden" name="Full text" readonly="" tabindex="0" type="checkbox" value="false">
+										<label>false ({{no_abstract}})</label>
+									</div>
+									<div class="ui checkbox ">
+										<input class="hidden" name="Full text" readonly="" tabindex="0" type="checkbox" value="true">
+										<label>true ({{ abstract_available }})</label>
+									</div>
+								</div>
 							</div>
-							<input type="submit" value="Submit">
-						</form>
-
-						<a class="btn btn-primary" data-toggle="collapse" href="#author-collapse" role="button" aria-expanded="false" aria-controls="author-collapse">
-							Authors
-						</a>
-						<div class="collapse" id="author-collapse">
-							  <div class="card card-body">
-								  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-							  </div>
 						</div>
 					</div>
 				</div>
 			</div>
-	</div>
 {% endblock %}
+
