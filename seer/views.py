@@ -285,7 +285,11 @@ def __search(request, query, page,source="",journal="",fulltext="",abstract="",a
                 # f.filename= str(imageid)+'.png'
                 f.doi = result['_source']['doi']
                 f.source = result['_source']['source_x']
+
                 f.journal = result['_source']['journal']
+
+                if not f.journal:
+                    f.journal = 'N/A'
 
                 SearchResults.append(f)
                 
