@@ -423,6 +423,9 @@ def Document(request, document_id):
     context['source'] = result['_source']['source_x']
     context['journal'] = result['_source']['journal']
 
+    if not context['journal']:
+        context['journal'] = 'N/A'
+        
     return render(request, 'seer/document.html', context)
 
 
