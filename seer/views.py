@@ -192,7 +192,13 @@ def add_journal_filters(filter_query,journal):
 def add_authors_filters(filter_query,journal):
     return filter_query
 
-def __search(request, query, page,source="",journal="",fulltext="",abstract="",author=""):
+def __search(request, query, page, source="",journal="",full_text="",abstract="",author=""):
+    print("SOURCE:", source)
+    print("JOURNAL:", journal)
+    print("FULL TEXT:", full_text)
+    print("ABSTRACT:", abstract)
+    print("AUTHOR:", author)
+
     #print("REQUEST:", request)
     #for testing
     #source = "Elsevier"
@@ -229,7 +235,6 @@ def __search(request, query, page,source="",journal="",fulltext="",abstract="",a
         for each_filter in filter_query:
             body['query']['bool']['filter'].append(each_filter)
         body = body
-        print(body)
     res = es.search(index=ELASTIC_INDEX, body=body)
     #print("RESULTS", res)
     #print("RESULTS keys", res['hits']['total']['value'])
@@ -384,6 +389,14 @@ def Query(request):
         q = request.GET.get('query')
         start = int(request.GET.get('page', 1))
 
+        '''
+        source = request.GET.get('source')
+        journal = request.GET.get('journal')
+        full_text = request.GET.get('full_text')
+        abstract = request.GET.get('abstract')
+        author = request.GET.get('author')
+        '''
+        
         if q is not None and len(q) > 1:
             return __search(request, q, start)
         else:
