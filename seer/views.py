@@ -163,6 +163,7 @@ def aggs():
 
 def add_source_filters(filter_query,source):
     source = source.split(',')
+
     if len(source)>0:
         for x in source:
             source_filter = {

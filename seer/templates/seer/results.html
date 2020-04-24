@@ -143,7 +143,6 @@
 											</label>
 										</div>
 										{% endfor %}
-										<input type="hidden" name="source" id="source_str">
 									</div>								
 
 									<a class="collapsed" data-toggle="collapse" href="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo2">
@@ -160,7 +159,6 @@
 											</label>
 										</div>
 										{% endfor %}
-										<input type="hidden" name="journal" id="journal_str">
 									</div>
 
 									<a data-toggle="collapse" href="#collapseOne3" aria-expanded="true" aria-controls="collapseOne3">
@@ -177,7 +175,6 @@
 											</label>
 										</div>
 										{% endfor %}
-										<input type="hidden" name="author" id="author_str">							
 									</div>
 
 									<a class="collapsed" data-toggle="collapse" href="#collapseThree4" aria-expanded="false" aria-controls="collapseThree4">
@@ -198,7 +195,6 @@
 												true ({{ fulltext_available }})
 											</label>
 										</div>
-										<input type="hidden" name="full_text" id="full_text_str">							
 									</div>
 
 									<a class="button" data-toggle="collapse" href="#collapseOne5" aria-expanded="true" aria-controls="collapseOne5">
@@ -220,7 +216,6 @@
 												true ({{ abstract_available }})
 											</label>
 										</div>
-										<input type="hidden" name="abstract" id="abstract_str">							
 									</div>
 
 									<button type="submit" value="search" class="search-button btn">
@@ -235,7 +230,30 @@
 {% endblock %}
 
 {% block javascript %}
+
 <script>
+	$(document).ready(function(){
+		if(!sessionStorage.activeCollapses) {
+			sessionStorage.activeCollapses = []
+		}
+
+		$('a[data-toggle="collapse"]').on('show.bs.collapse', function(e) {
+			sessionStorage.activeCollapses.push(this)
+		});
+
+		$('a[data-toggle="collapse"]').on('hide.bs.collapse', function(e) {
+			sessionStorage.activeCollapses.push(this)
+		});
+
+
+		var activeCollapses = sessionStorage.getItem('activeCollapses');
+
+		if(activeCollapses){
+			for(const header in activeCollapses) {
+				$(header).collapse('show');
+			}
+		}
+	});
 
 	form = document.getElementById('filter-form');
 
@@ -251,7 +269,7 @@
 		var checkboxes = [];
 		$('input:checked').each(function() {
 			checkboxes.push($(this));
-			$(this).prop("checked", false);
+			$(this).val("checked", false);
 		});
 
 		checked = {}
@@ -259,7 +277,6 @@
 		for(i = 0; i < checkboxes.length; i++) {
 			var box = checkboxes[i];
 			key = box.attr('name');
-			console.log("TEST: " + box);
 			!(key in checked) && (checked[key] = [])
 
 			checked[key].push(box.attr('value'));
@@ -267,7 +284,11 @@
 		
 		for([key, value] of Object.entries(checked)) {
 			var checkedStr = value.join();
-			document.getElementById(`${key}_str`).value = checkedStr;
+
+			var input = $("<input>", {type: "hidden", name: key, value: checkedStr});
+			
+			console.log("INPUT:  " + input.name);
+			$(form).append(input);
 		}
 		
 		form.submit();
