@@ -388,17 +388,15 @@ def Query(request):
     if request.method == 'GET':
         q = request.GET.get('query')
         start = int(request.GET.get('page', 1))
-
-        '''
+        
         source = request.GET.get('source')
         journal = request.GET.get('journal')
         full_text = request.GET.get('full_text')
         abstract = request.GET.get('abstract')
         author = request.GET.get('author')
-        '''
-        
+
         if q is not None and len(q) > 1:
-            return __search(request, q, start)
+            return __search(request, q, start, source, journal, full_text, abstract, author)
         else:
             return render(request, 'seer/index.html', {})
 
