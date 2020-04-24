@@ -217,6 +217,23 @@
 											</label>
 										</div>
 									</div>
+									
+									<a class="collapsed" data-toggle="collapse" href="#collapseSix6" aria-expanded="false" aria-controls="collapseSix6">
+										<h5>
+										Pushlished Year  ({{uniq_years}})<i class="fas fa-angle-down rotate-icon"></i>
+										</h5>
+									</a>
+									<div id="collapseSix6" class="collapse" role="tabpanel" aria-labelledby="headingTwo2">
+										{% for yr in years %}
+										<div class="ui checked checkbox ">
+											<label>
+												<input class="hidden" name="journal" readonly="" tabindex="0" type="checkbox" value="{{jnl.name}}">
+												{{yr.name}}  ({{yr.count}})
+											</label>
+										</div>
+										{% endfor %}
+										<input type="hidden" name="year" id="year_str">
+									</div>
 
 									<button type="submit" value="search" class="search-button btn">
 										Submit
