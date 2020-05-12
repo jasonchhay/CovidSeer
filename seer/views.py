@@ -367,7 +367,7 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
             context['no_fulltext'] =aggregations['contains_abstract']['buckets']['fulltext']['doc_count']
             context['uniq_authors'] = aggregations['first']['value']
             context['uniq_years']  =aggregations['uniq_years']['value']
-
+            
             context['abstract_available'] = totalresultsNumFound - context['no_abstract'] 
             context['fulltext_available'] = totalresultsNumFound - context['no_fulltext']
             context['total'] = totalresultsNumFound
@@ -415,8 +415,7 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
                 for jnl in res['aggregations']['journals']['buckets']:
                     if jnl['key'] =='':
                         jnl['key']= "Unknown"
-                    jnls.append({'name':jnl['key'],'count':jnl['doc_count']})
-                                
+                    jnls.append({'name':jnl['key'],'count':jnl['doc_count']})                                
             #Adding list of years
             total_years = len(res['aggregations']['year']['buckets'])
             yrs =[]
@@ -497,7 +496,6 @@ def Document(request, document_id):
 
     if not context['journal']:
         context['journal'] = 'N/A'
-
     return render(request, 'seer/document.html', context)
 
 
