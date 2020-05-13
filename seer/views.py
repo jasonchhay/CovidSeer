@@ -242,11 +242,11 @@ def remove_stop(query):
 
 def __search(request, query, page, source="",journal="",full_text="",abstract="",author="",year=""):
     
-    query = query.lower()
-    query = remove_punct(query)
-    query = remove_stop(query)
+    nquery = query.lower()
+    nquery = remove_punct(nquery)
+    nquery = remove_stop(nquery)
     
-    print(query)
+    print(nquery)
     print("SOURCE:", source)
     print("JOURNAL:", journal)
     print("FULL TEXT:", full_text)
@@ -277,7 +277,7 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
                 "filter": [
                     {
                     "multi_match": {
-                            "query": query,
+                            "query": nquery,
                             "fields":  ["body_text","abstract^2", "metadata.title^3"],
                             "type": "cross_fields"
                         }
