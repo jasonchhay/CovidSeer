@@ -11,7 +11,7 @@ ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
 
 # USER = open("elastic-settings.txt").read().split("\n")[1]
 # PASSWORD = open("elastic-settings.txt").read().split("\n")[2]
-ELASTIC_INDEX = 'cord_meta'
+ELASTIC_INDEX = 'cord_temp'
 
 # open connection to Elastic
 es = Elasticsearch(['http://csxindex05:9200/'], verify_certs=True)
@@ -50,10 +50,10 @@ def __get_author_list(result):
 
         if suffix is None or suffix == '':
             author['name'] = ' '.join([first_name, last_name])
-            print(first_name)
+            #print(first_name)
         else:
             author['name'] = ' '.join([first_name, last_name, suffix])
-            print("SUFFIX:", suffix)
+            #print("SUFFIX:", suffix)
 
         # Build the affiliation of the author
         if len(data['affiliation']) > 0:
@@ -82,7 +82,7 @@ def __get_author_list(result):
             author['institution'] = 'N/A'
             author['laboratory'] = 'N/A'
 
-        print(author)
+        #print(author)
         author_list.append(author)
 
     return author_list
@@ -109,6 +109,16 @@ def aggs():
                         "field":"journal.keyword"
                     }
                 },
+                "uniq_years":{
+                    "cardinality" : {
+                        "field" : "publish_year.keyword"
+                    }
+                },
+                "year":{
+                    "terms":{
+                        "field":"publish_year.keyword"
+                    }
+                },
                 "contains_abstract":{
                     "filters":{
                         "filters": {
@@ -119,7 +129,7 @@ def aggs():
                 },
                 "first":{
                     "cardinality": {
-                        "field": "metadata.authors.first.keyword"
+                        "field": "metadata.authors.fullname.keyword"
                     }
                 },
                 "middle":{
@@ -134,77 +144,129 @@ def aggs():
                 },
                 "full_name":{
                     "terms": {
-                        "field": "metadata.authors.first.keyword",
+                        "field": "metadata.authors.fullname.keyword",
                         "size":20,
                         "order" : { "_count" : "desc" }
-                    },
-                    "aggs": {
-                        "middle": {
-                        "terms": {
-                            "field": "metadata.authors.middle.keyword",
-                            "size":2,
-                            "order" : { "_count" : "desc" }
-                        },
-                        "aggs": {
-                            "last":{
-                            "terms": {
-                            "field": "metadata.authors.last.keyword",
-                            "size":5,
-                            "order" : { "_count" : "desc" }
-                            }
-                        }
-                        }
-                        }
                     }
                 }
             }
     
     return agg_query
 
-def add_source_filters(filter_query,source):
+def add_source_filters(template,filter_query,source):
     source = source.split(',')
+    source_filter = template
+
     if len(source)>0:
         for x in source:
-            source_filter = {
+            source_filter['bool']['should'].append({
                 "match_phrase": {
                     "source_x.keyword": {
                       "query": x
                         }
                     }
-                }
-            filter_query.append(source_filter)
+                })
+        filter_query.append(source_filter)
     return filter_query
 
-def add_journal_filters(filter_query,journal):
+
+def add_journal_filters(template,filter_query,journal):
     journal = journal.split(',')
+    journal_filter = template
     if len(journal)>0:
         for x in journal:
-            source_filter = {
+            journal_filter['bool']['should'].append({
                 "match_phrase": {
                     "journal.keyword": {
                       "query": x
                         }
                     }
-                }
-            filter_query.append(source_filter)
+                })
+        filter_query.append(journal_filter)
     return filter_query
 
-def add_authors_filters(filter_query,journal):
+
+def add_year_filters(template,filter_query,year):
+    year = year.split(',')
+    year_filter = template
+    if len(year)>0:
+        for x in year:
+            year_filter['bool']['should'].append({
+                "match_phrase": {
+                    "publish_year.keyword": {
+                      "query": x
+                        }
+                    }
+                })
+        filter_query.append(year_filter)
     return filter_query
 
-def __search(request, query, page,source="",journal="",fulltext="",abstract="",author=""):
-    #print("REQUEST:", request)
-    #for testing
-    #source = "Elsevier"
-    #journal = "Virology"
+def add_authors_filters(template,filter_query,author):
+    author = author.split(',')
+    author_filter = template
+    if len(author)>0:
+        for x in author:
+            author_filter['bool']['should'].append({
+                "match_phrase": {
+                    "metadata.authors.fullname.keyword": {
+                      "query": x
+                        }
+                    }
+                })
+        filter_query.append(author_filter)
+    return filter_query
+
+def remove_punct(my_str):
+    punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    # To take input from the user
+    # my_str = input("Enter a string: ")
+
+    # remove punctuation from the string
+    no_punct = ""
+    for char in my_str:
+        if char not in punctuations:
+            no_punct = no_punct + char
+
+    # display the unpunctuated string
+    return no_punct
+
+def remove_stop(query):
+    with open('/data/CoronaSeer/seer/englishST.txt') as f:
+        all_stopwords = f.readlines()
+    # you may also want to remove whitespace characters like `\n` at the end of each line
+    all_stopwords = [x.strip() for x in all_stopwords] 
+    text_tokens = query.split(' ')
+    query = [word for word in text_tokens if not word in all_stopwords]
+    query = ' '.join(query)
+    return query
+
+def __search(request, query, page, source="",journal="",full_text="",abstract="",author="",year=""):
+    
+    nquery = query.lower()
+    nquery = remove_punct(nquery)
+    nquery = remove_stop(nquery)
+    
+    print(nquery)
+    print("SOURCE:", source)
+    print("JOURNAL:", journal)
+    print("FULL TEXT:", full_text)
+    print("ABSTRACT:", abstract)
+    print("AUTHOR:", author)
+
+    template = {
+        "bool":{
+            "should":[]
+        }
+    }
     filter_query =[]
     if source:
-        filter_query = add_source_filters(filter_query,source)
+        filter_query = add_source_filters(template,filter_query,source)
     if journal:
-        filter_query = add_journal_filters(filter_query,journal)
+        filter_query = add_journal_filters(template,filter_query,journal)
+    if year:
+        filter_query = add_year_filters(template,filter_query,year)
     if author:
-        filter_query = add_authors_filters(filter_query,journal)
-        
+        filter_query = add_authors_filters(template,filter_query,author)
     size = 15
     start = (page - 1) * size
     body = {
@@ -215,12 +277,13 @@ def __search(request, query, page,source="",journal="",fulltext="",abstract="",a
                 "filter": [
                     {
                     "multi_match": {
-                            "query": query,
+                            "query": nquery,
                             "fields":  ["body_text","abstract^2", "metadata.title^3"],
-                            "type": "phrase"
+                            "type": "cross_fields"
                         }
                      }
-                ]
+                ],
+                "must":[]
             }
         },
         "aggs" : aggs(),
@@ -228,9 +291,10 @@ def __search(request, query, page,source="",journal="",fulltext="",abstract="",a
     }
     if len(filter_query)>0:
         for each_filter in filter_query:
-            body['query']['bool']['filter'].append(each_filter)
+            body['query']['bool']['must'].append(each_filter)
+        #body['query']['bool']['minimum_should_match'] = 1
         body = body
-        print(body)
+
     res = es.search(index=ELASTIC_INDEX, body=body)
     #print("RESULTS", res)
     #print("RESULTS keys", res['hits']['total']['value'])
@@ -301,10 +365,9 @@ def __search(request, query, page,source="",journal="",fulltext="",abstract="",a
             context['uniq_sources'] = aggregations['uniq_sources']['value']
             context['no_abstract'] =aggregations['contains_abstract']['buckets']['abs']['doc_count']
             context['no_fulltext'] =aggregations['contains_abstract']['buckets']['fulltext']['doc_count']
-            context['uniq_authors'] = max(aggregations['first']['value'], 
-                                        aggregations['middle']['value'],
-                                         aggregations['last']['value'])
-
+            context['uniq_authors'] = aggregations['first']['value']
+            context['uniq_years']  =aggregations['uniq_years']['value']
+            
             context['abstract_available'] = totalresultsNumFound - context['no_abstract'] 
             context['fulltext_available'] = totalresultsNumFound - context['no_fulltext']
             context['total'] = totalresultsNumFound
@@ -352,26 +415,28 @@ def __search(request, query, page,source="",journal="",fulltext="",abstract="",a
                 for jnl in res['aggregations']['journals']['buckets']:
                     if jnl['key'] =='':
                         jnl['key']= "Unknown"
-                    jnls.append({'name':jnl['key'],'count':jnl['doc_count']})
+                    jnls.append({'name':jnl['key'],'count':jnl['doc_count']})                                
+            #Adding list of years
+            total_years = len(res['aggregations']['year']['buckets'])
+            yrs =[]
+            if (total_years > 0):
+                for yr in res['aggregations']['year']['buckets']:
+                    if yr['key'] =='':
+                        yr['key']= "Unknown"
+                    yrs.append({'name':yr['key'],'count':yr['doc_count']})
 
             context['sources'] = sources
             context['journals'] = jnls
+            context['years'] =  yrs
 
             #Adding authors to the list
             auths =[]
             fullname = res['aggregations']['full_name']['buckets']
-            for first in fullname:
-                name1 = first['key']
-                for middle in first['middle']['buckets']:
-                    name2 = middle['key']
-                    for last in middle['last']['buckets']:
-                        name3 = last['key']
-                        auths.append({'name':name1+' '+name2+' '+name3, 'count':last['doc_count']})
-                        break
-                    break
+            for name in fullname:
+                auths.append({'name':name['key'],'count':name['doc_count']})
 
             context['authors'] = auths
-            print(context)
+            #print(context)
             return render(request, 'seer/results.html', context)
 
             
@@ -388,9 +453,15 @@ def Query(request):
     if request.method == 'GET':
         q = request.GET.get('query')
         start = int(request.GET.get('page', 1))
+        
+        source = request.GET.get('source')
+        journal = request.GET.get('journal')
+        full_text = request.GET.get('full_text')
+        abstract = request.GET.get('abstract')
+        author = request.GET.get('author')
 
         if q is not None and len(q) > 1:
-            return __search(request, q, start)
+            return __search(request, q, start, source, journal, full_text, abstract, author)
         else:
             return render(request, 'seer/index.html', {})
 
@@ -425,7 +496,6 @@ def Document(request, document_id):
 
     if not context['journal']:
         context['journal'] = 'N/A'
-        
     return render(request, 'seer/document.html', context)
 
 
