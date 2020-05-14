@@ -15,6 +15,9 @@
 	<meta prefix="og: http://ogp.me/ns#" property="og:url" content="https://covidseer.ist.psu.edu/">
 
 	<link rel='icon' href="{% static 'img/favicon.ico' %}" type='image/x-icon'/>
+
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 	<link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
@@ -80,6 +83,7 @@
 	                </div>
 	        </div>
 	</footer>
+	{% block vuejs %}{% endblock %}
 	<script src="https://kit.fontawesome.com/e80c85a2cc.js" crossorigin="anonymous"></script>
     <script src="{% static 'js/jquery.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>

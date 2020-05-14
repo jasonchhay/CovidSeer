@@ -216,8 +216,42 @@ def add_authors_filters(template,filter_query,author):
         filter_query.append(author_filter)
     return filter_query
 
+<<<<<<< HEAD
 def __search(request, query, page, source="",journal="",full_text="",abstract="",author="",year=""):
 
+=======
+def remove_punct(my_str):
+    punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    # To take input from the user
+    # my_str = input("Enter a string: ")
+
+    # remove punctuation from the string
+    no_punct = ""
+    for char in my_str:
+        if char not in punctuations:
+            no_punct = no_punct + char
+
+    # display the unpunctuated string
+    return no_punct
+
+def remove_stop(query):
+    with open('/data/CoronaSeer/seer/englishST.txt') as f:
+        all_stopwords = f.readlines()
+    # you may also want to remove whitespace characters like `\n` at the end of each line
+    all_stopwords = [x.strip() for x in all_stopwords] 
+    text_tokens = query.split(' ')
+    query = [word for word in text_tokens if not word in all_stopwords]
+    query = ' '.join(query)
+    return query
+
+def __search(request, query, page, source="",journal="",full_text="",abstract="",author="",year=""):
+    
+    nquery = query.lower()
+    nquery = remove_punct(nquery)
+    nquery = remove_stop(nquery)
+    
+    print(nquery)
+>>>>>>> develop
     print("SOURCE:", source)
     print("JOURNAL:", journal)
     print("FULL TEXT:", full_text)
@@ -238,7 +272,10 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
         filter_query = add_year_filters(template,filter_query,year)
     if author:
         filter_query = add_authors_filters(template,filter_query,author)
+<<<<<<< HEAD
         
+=======
+>>>>>>> develop
     size = 15
     start = (page - 1) * size
     body = {
@@ -249,9 +286,15 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
                 "filter": [
                     {
                     "multi_match": {
+<<<<<<< HEAD
                             "query": query,
                             "fields":  ["body_text","abstract^2", "metadata.title^3"],
                             "type": "phrase"
+=======
+                            "query": nquery,
+                            "fields":  ["body_text","abstract^2", "metadata.title^3"],
+                            "type": "cross_fields"
+>>>>>>> develop
                         }
                      }
                 ],
@@ -339,7 +382,11 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
             context['no_fulltext'] =aggregations['contains_abstract']['buckets']['fulltext']['doc_count']
             context['uniq_authors'] = aggregations['first']['value']
             context['uniq_years']  =aggregations['uniq_years']['value']
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> develop
             context['abstract_available'] = totalresultsNumFound - context['no_abstract'] 
             context['fulltext_available'] = totalresultsNumFound - context['no_fulltext']
             context['total'] = totalresultsNumFound
@@ -387,8 +434,12 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
                 for jnl in res['aggregations']['journals']['buckets']:
                     if jnl['key'] =='':
                         jnl['key']= "Unknown"
+<<<<<<< HEAD
                     jnls.append({'name':jnl['key'],'count':jnl['doc_count']})
             
+=======
+                    jnls.append({'name':jnl['key'],'count':jnl['doc_count']})                                
+>>>>>>> develop
             #Adding list of years
             total_years = len(res['aggregations']['year']['buckets'])
             yrs =[]
@@ -469,7 +520,10 @@ def Document(request, document_id):
 
     if not context['journal']:
         context['journal'] = 'N/A'
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
     return render(request, 'seer/document.html', context)
 
 

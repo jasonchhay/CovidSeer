@@ -6,7 +6,8 @@
 {% endblock %}
 
 {% block content %}
-	<div class="container">
+	<div class="container" id="app">
+		[[message]]
 		<div class="results-container" >
 			<div id="search-container" >
 				<a href="{% url 'home' %}">
@@ -244,10 +245,27 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block vuejs %}
+<script type='text/javascript'>
+    document.addEventListener('beforeunload', function () {
+      new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        // define data - initial display text
+        data: {
+          message: "You got to let me know!"
+        }
+      })
+    })
+</script>
 {% endblock %}
 
 {% block javascript %}
-
+<!--
 <script>
 	$(document).ready(function(){
 		if(!sessionStorage.activeCollapses) {
@@ -313,4 +331,5 @@
 	}
 
 </script>
+-->
 {% endblock %}
