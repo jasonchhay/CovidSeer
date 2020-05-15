@@ -7,6 +7,9 @@ urlpatterns = [
     path('', views.Home, name='home'),
     path('search', views.Query, name='search'),
     path('doc/id/<document_id>/', views.Document, name='document'),
-    path('doc/json/id/<document_id>.json', views.DocumentJson, name='document_json')
+    path('doc/json/id/<document_id>.json', views.DocumentJson, name='document_json'),
+
+    # API
+    path('api/search/<query>/<int:page>', views.search, name='api_search_index'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

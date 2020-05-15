@@ -7,11 +7,11 @@
 
 {% block content %}
 	<div class="container" id="app">
-		[[message]]
+		<!--<p v-cloak>[[message]]</p>-->
 		<div class="results-container" >
 			<div id="search-container" >
 				<a href="{% url 'home' %}">
-					<img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo"  height="80"/>
+					<img src="{% static 'img/covidseer_logo.png' %}" alt="COVIDSeer Logo"  height="80"/>
 				</a>
 				<form method="GET" action="{% url 'search' %}">
 			        <div class="search-bar-wrapper">
@@ -36,61 +36,53 @@
 							Results <strong>{{position}} - {{nextResults}} </strong> of <strong>{{total}}</strong>
 						</div>
 						
-						{% for hit in results %}
-							{% autoescape off %}
-								<div class="result">
-										<div class="url" >
-											<h5 class="result-title"><b><a href="{% url 'document' document_id=hit.resultid %}">{{hit.title}}</a></b> </h5>
-					                        <!--<p>{{ hit.c }} </p></div>-->
-											<div class="author-container">
-						                        {% for author in hit.authors %}
-					                                <div class="author">
-						                                <p>{{author.name}}</p>
-								                        <div class="author-content">
-									                        <h4>{{ author.name }}</h4>
-									                        <table>
-										                        <tr>
-											                        <th>Location:</th>
-											                        <td>{{ author.location }}</td>
-										                        </tr>
-										                        <tr>
-											                        <th>Institution:</th>
-											                        <td>{{ author.institution }}</td>
-										                        </tr>
-										                        <tr>
-											                        <th>Laboratory:</th>
-											                        <td>{{ author.laboratory }}</td>
-										                        </tr>
-									                        </table>
-								                        </div>
-				                                    </div>{% if forloop.counter < hit.authors|length %}, {% endif %}
-						                        {% endfor %}
-				                             </div>
-											<span class="description row">
-												<div class="col-md-12">
-													<p>{{ hit.description }}</p>
-												</div>
-											</span>
-											<div class="journal row">
-												<div class="col-md-12"><b>Journal:</b> {{ hit.journal }}</div>
+						<div class="result" v-for="hit in results" :key="hit.resultid" v-cloak>
+							<div class="url" >
+								<h5 class="result-title"><b><a href="google.com">[[hit.title]]</a></b></h5>
+								<!--<p>{{ hit.c }} </p></div>-->
+								<div class="author-container">
+									{% for author in hit.authors %}
+										<div class="author">
+											<p>{{author.name}}</p>
+											<div class="author-content">
+												<h4>{{ author.name }}</h4>
+												<table>
+													<tr>
+														<th>Location:</th>
+														<td>{{ author.location }}</td>
+													</tr>
+													<tr>
+														<th>Institution:</th>
+														<td>{{ author.institution }}</td>
+													</tr>
+													<tr>
+														<th>Laboratory:</th>
+														<td>{{ author.laboratory }}</td>
+													</tr>
+												</table>
 											</div>
-											<div class="source row">
-												<div class="col-md-6">
-													<b>Source:</b> {{ hit.source }}
-												</div>
-												<div class="col-md-6 doi-link">
-													<a href="https://doi.org/{{ hit.doi }}" target="_blank" class="doi-link">View full article</a>
-												</div>
-											</div>
-											
-					                        <!--<div class="prior"><b><a href="{{MEDIA_URL}}/{{hit.previous_image}}">Previous Frame</a></b></div>
-					                        <div class="next"><b><a href="{{MEDIA_URL}}/{{hit.next_image}}">Next Frame</a></b></div>
-					                       -->
+										</div>{% if forloop.counter < hit.authors|length %}, {% endif %}
+									{% endfor %}
+									</div>
+									<span class="description row">
+										<div class="col-md-12">
+											<p>[[hit.description]]</p>
 										</div>
-						         </div>
-							{% endautoescape%}
-						{% endfor%}
-						<div class="location" ><p>{{ hit.affiliation }}</p></div>
+									</span>
+									<div class="journal row">
+										<div class="col-md-12"><b>Journal:</b>[[hit.journal]]</div>
+									</div>
+									<div class="source row">
+										<div class="col-md-6">
+											<b>Source:</b> [[hit.source]]
+										</div>
+										<div class="col-md-6 doi-link">
+											<a href="https://doi.org/[[hit.doi]]" target="_blank" class="doi-link">View full article</a>
+										</div>
+									</div>
+								</div>
+								<div class="location" ><p>[[hit.affiliation]]</p></div>
+							</div>
 						</div>
 						
 						<div class="pager">
@@ -125,120 +117,25 @@
 							<h5 class="card-header">
 								Filter results
 							</h5>
+							<!--[[appliedFilters]]-->
 							<div class="card-body">
 								<form id="filter-form" method="GET" action="{% url 'search' %}">
-									<input id="test" name="query" type="hidden" value="{{q}}">
-
-									<a class="collapsed" data-toggle="collapse" href="#collapseOne1" aria-expanded="false" aria-controls="collapseOne1">
-										<h5>
-											Source  ({{uniq_sources}})	<i class="fas fa-angle-down rotate-icon"></i>
-										</h5>
-									</a>
-									<div id="collapseOne1" class="collapse" role="tabpanel" aria-labelledby="headingOne1">
-										{% for src in sources %}
-										<div class="ui checked checkbox">
-											<label>
-												<input class="source-checkbox" name="source" readonly="" tabindex="0" type="checkbox" value="{{src.name}}"  
-												urls="{% url 'search' %}">
-												{{src.name}}  ({{src.count}})
-											</label>
+									<div v-for="(filter, key) in resultFilters" :key="key">
+										<a class="collapsed" data-toggle="collapse" :href="'#' + key" aria-expanded="false" :aria-controls="key">
+											<h5>
+												[[filter.displayName]] ([[filter.total]])	<i class="fas fa-angle-down rotate-icon"></i>
+											</h5>
+										</a>
+										<div :id="key" class="collapse" role="tabpanel">
+											<div v-for="(option, index) in filter.options" key="index" class="ui checked checkbox">
+												<label>
+													<input class="source-checkbox" type="checkbox" :value="option.name"
+													urls="{% url 'search' %}" v-model="appliedFilters[key]" v-on:click="filterResults">
+													[[option.name]]  ([[option.count]])
+												</label>
+											</div>
 										</div>
-										{% endfor %}
-									</div>								
-
-									<a class="collapsed" data-toggle="collapse" href="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo2">
-										<h5>
-										Journal  ({{uniq_journals}})<i class="fas fa-angle-down rotate-icon"></i>
-										</h5>
-									</a>
-									<div id="collapseTwo2" class="collapse" role="tabpanel" aria-labelledby="headingTwo2">
-										{% for jnl in journals %}
-										<div class="ui checked checkbox ">
-											<label>
-												<input class="hidden" name="journal" readonly="" tabindex="0" type="checkbox" value="{{jnl.name}}">
-												{{jnl.name}}  ({{jnl.count}})
-											</label>
-										</div>
-										{% endfor %}
-									</div>
-
-									<a data-toggle="collapse" href="#collapseOne3" aria-expanded="true" aria-controls="collapseOne3">
-										<h5>
-										Author  ({{uniq_authors}})    <i class="fas fa-angle-down rotate-icon"></i>
-										</h5>
-									</a>	
-									<div id="collapseOne3" class="collapse" role="tabpanel" aria-labelledby="headingOne1">
-										{% for auth in authors %}
-										<div class="ui checked checkbox ">
-											<label>
-												<input class="hidden" name="author" readonly="" tabindex="0" type="checkbox" value="{{auth.name}}" >
-												{{auth.name}}  ({{auth.count}})
-											</label>
-										</div>
-										{% endfor %}
-									</div>
-
-									<a class="collapsed" data-toggle="collapse" href="#collapseThree4" aria-expanded="false" aria-controls="collapseThree4">
-										<h5>
-										Full Text ({{total}}) <i class="fas fa-angle-down rotate-icon"></i>
-										</h5>
-									</a>
-									<div id="collapseThree4" class="collapse" role="tabpanel" aria-labelledby="headingThree3">
-										<div class="ui checkbox ">
-											<label>
-												<input class="hidden" name="full_text" readonly="" tabindex="0" type="checkbox" value="false">
-												false ({{no_fulltext}})
-											</label>
-										</div>
-										<div class="ui checkbox ">
-											<label>
-												<input class="hidden" name="full_text" readonly="" tabindex="0" type="checkbox" value="true">
-												true ({{ fulltext_available }})
-											</label>
-										</div>
-									</div>
-
-									<a class="button" data-toggle="collapse" href="#collapseOne5" aria-expanded="true" aria-controls="collapseOne5">
-										<h5>
-											Abstract  ({{total}})<i class="fas fa-angle-down rotate-icon"></i>
-										</h5>
-									</a>
-									
-									<div id="collapseOne5" class="collapse" role="tabpanel" aria-labelledby="headingOne1">
-										<div class="ui checkbox ">
-											<label>
-												<input class="hidden" name="abstract" readonly="" tabindex="0" type="checkbox" value="false">
-												false ({{no_abstract}})
-											</label>
-										</div>
-										<div class="ui checkbox ">
-											<label>
-												<input class="hidden" name="abstract" readonly="" tabindex="0" type="checkbox" value="true">
-												true ({{ abstract_available }})
-											</label>
-										</div>
-									</div>
-									
-									<a class="collapsed" data-toggle="collapse" href="#collapseSix6" aria-expanded="false" aria-controls="collapseSix6">
-										<h5>
-										Pushlished Year  ({{uniq_years}})<i class="fas fa-angle-down rotate-icon"></i>
-										</h5>
-									</a>
-									<div id="collapseSix6" class="collapse" role="tabpanel" aria-labelledby="headingTwo2">
-										{% for yr in years %}
-										<div class="ui checked checkbox ">
-											<label>
-												<input class="hidden" name="journal" readonly="" tabindex="0" type="checkbox" value="{{jnl.name}}">
-												{{yr.name}}  ({{yr.count}})
-											</label>
-										</div>
-										{% endfor %}
-										<input type="hidden" name="year" id="year_str">
-									</div>
-
-									<button type="submit" value="search" class="search-button btn">
-										Submit
-									</button>
+									</div>							
 								</form>
 							</div>
 						</div>
@@ -250,17 +147,56 @@
 {% endblock %}
 
 {% block vuejs %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'></script>
 <script type='text/javascript'>
-    document.addEventListener('beforeunload', function () {
       new Vue({
         delimiters: ['[[', ']]'],
         el: '#app',
         // define data - initial display text
         data: {
-          message: "You got to let me know!"
-        }
+          query: $('#search-box').val(),
+		  results: [],
+		  resultFilters: [],
+		  appliedFilters: {},
+		  page: 1
+        },
+		beforeMount() {
+			console.log(this.query);
+			this.getResults(this.query, 1);
+		},
+		methods: {
+			getResults: function(query) {
+				axios
+				.get(`/api/search/${query}/1`)
+				.then(response => {
+					const data = response.data.context;
+					
+					this.query = data.query;
+					this.results = data.results;
+					this.resultFilters = data.filters;
+
+					for(const [key, value] of Object.entries(this.resultFilters)) {
+						this.appliedFilters[key] = [];
+					}
+				})
+			}, 
+
+			filterResults: function() {
+				var filter_query = '';
+				for (let [key, filterList] of Object.entries(this.appliedFilters)) {
+					console.log(key + " " + filterList);
+					filter_query = filter_query.concat(`${key}=${filterList}&`)
+				}
+				console.log(filter_query);
+
+				axios
+				.get(`/api/search/${this.query}/1?${filter_query}`)
+				.then(response => {
+					this.results = response.data.context.results;
+				})
+			}, 
+		}
       })
-    })
 </script>
 {% endblock %}
 
