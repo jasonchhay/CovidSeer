@@ -7,7 +7,6 @@
 
 {% block content %}
 	<div class="container" id="app">
-		<!--<p v-cloak>[[message]]</p>-->
 		<div class="results-container" >
 			<div id="search-container" >
 				<a href="{% url 'home' %}">
@@ -15,7 +14,7 @@
 				</a>
 				<form method="GET" action="{% url 'search' %}">
 			        <div class="search-bar-wrapper">
-				            <input type="text" name="query" id="search-box" class='form-control' value="{{ q }}"/>
+				            <input type="text" name="query" id="search-box" class='form-control' value="{{ query }}"/>
 				            <!-- <input type="hidden" name="type" id="q_type" value="Figures"/> -->
 					        <button type="submit" value="search" class="search-button btn">
 						        <i class="fas fa-search"></i>
@@ -24,92 +23,99 @@
 		        <br/>
 		        </form>
 			</div>
-			<div class="row">
+			<div class="row" v-if="loading" style="text-align: center;">
+				<div class="col-md-12">
+					<div class="spinner-border" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</div>
+			</div>
+			<div class="row" v-cloak v-else>
 				<div class="col-md-8">
-					<div class="result-list">
+					<div class="row" v-if="resultsLoading" style="text-align: center;">
+						<div class="col-md-12">
+							<div class="spinner-border" role="status">
+								<span class="sr-only">Loading...</span>
+							</div>
+						</div>
+					</div>
+					<div class="result-list" v-else>
 						{% if errormessage %}
 					    <div id="navwrapper" style="margin-bottom: 20vh; font-weight: 800;">
 					        {{ errormessage }}
 					    </div>
 				        {% else %}
 						<div id="result-info">
-							Results <strong>{{position}} - {{nextResults}} </strong> of <strong>{{total}}</strong>
+							Results <strong>[[position]] - [[nextResults]] </strong> of <strong>[[total]]</strong>
 						</div>
 						
 						<div class="result" v-for="hit in results" :key="hit.resultid" v-cloak>
 							<div class="url" >
-								<h5 class="result-title"><b><a href="google.com">[[hit.title]]</a></b></h5>
+								<h5 class="result-title"><b><a :href="getDocUrl(hit.resultid)">[[hit.title]]</a></b></h5>
 								<!--<p>{{ hit.c }} </p></div>-->
 								<div class="author-container">
-									{% for author in hit.authors %}
+									<span v-for="(author, index) in hit.authors" key="index">
 										<div class="author">
-											<p>{{author.name}}</p>
+											<p>[[author.name]]</p>
 											<div class="author-content">
-												<h4>{{ author.name }}</h4>
+												<h4>[[author.name]]</h4>
 												<table>
 													<tr>
 														<th>Location:</th>
-														<td>{{ author.location }}</td>
+														<td>[[author.location]]</td>
 													</tr>
 													<tr>
 														<th>Institution:</th>
-														<td>{{ author.institution }}</td>
+														<td>[[author.institution]]</td>
 													</tr>
 													<tr>
 														<th>Laboratory:</th>
-														<td>{{ author.laboratory }}</td>
+														<td>[[author.laboratory]]</td>
 													</tr>
 												</table>
 											</div>
-										</div>{% if forloop.counter < hit.authors|length %}, {% endif %}
-									{% endfor %}
-									</div>
-									<span class="description row">
-										<div class="col-md-12">
-											<p>[[hit.description]]</p>
 										</div>
+										<span v-if="index < hit.authors.length">, </span>
 									</span>
-									<div class="journal row">
-										<div class="col-md-12"><b>Journal:</b>[[hit.journal]]</div>
+								</div>
+								<span class="description row">
+									<div class="col-md-12">
+										<p v-html="hit.description"></p>
 									</div>
-									<div class="source row">
-										<div class="col-md-6">
-											<b>Source:</b> [[hit.source]]
-										</div>
-										<div class="col-md-6 doi-link">
-											<a href="https://doi.org/[[hit.doi]]" target="_blank" class="doi-link">View full article</a>
-										</div>
+								</span>
+								<div class="journal row">
+									<div class="col-md-12"><b>Journal:</b>[[hit.journal]]</div>
+								</div>
+								<div class="source row">
+									<div class="col-md-6">
+										<b>Source:</b> [[hit.source]]
+									</div>
+									<div class="col-md-6 doi-link">
+										<a href="https://doi.org/[[hit.doi]]" target="_blank" class="doi-link">View full article</a>
 									</div>
 								</div>
-								<div class="location" ><p>[[hit.affiliation]]</p></div>
 							</div>
+							<!--<div class="location" ><p>[[hit.affiliation]]</p></div>-->
 						</div>
+					</div>
 						
-						<div class="pager">
-							<span id="prev-page">
-								{% if prevResults != prevPageLimit and prevPage > 0 %}
-								<a href="{% url 'search' %}?query={{q}}&page={{ prevPage }}">Prev</a>
-								{% else %}
-								Prev
-								{% endif %}
-							</span>
-							
-							{% for i in prevPageList %}
-								<a href="{% url 'search' %}?query={{q}}&page={{ i }}">{{ i }}</a>
-							{% endfor %}
-							<strong>{{ page }}</strong>
-							{% for i in nextPageList %}
-								<a href="{% url 'search' %}?query={{q}}&page={{ i }}">{{ i }}</a>
-							{% endfor %}
-							
-							<span id="next-page">
-								{% if nextResults != nextPageLimit and nextPage <= nextPageLimit %}
-								<a href="{% url 'search' %}?query={{q}}&page={{ nextPage }}">Next</a>
-								{% else %}
-								Next
-								{% endif %}
-							</span>
-						</div>
+					<div class="pager" v-if="!resultsLoading">
+						<span id="prev-page">
+							<a v-if="prevResults != prevPageLimit && prevPage > 0" 
+								@click="getPage(prevPage)">Prev</a>
+							<span v-else>Prev</span>
+						</span>
+						
+						<a v-for="i in prevPageList" @click="getPage(i)">[[i]]</a>
+						<strong>[[page]]</strong>
+						<a v-for="i in nextPageList" @click="getPage(i)">[[i]]</a>
+						
+						<span id="next-page">
+							<a v-if="nextResults != nextPageLimit && nextPage <= nextPageLimit" 
+								@click="getPage(nextPage)">Next</a>
+							<span v-else>Next</span>
+						</span>
+					</div>
 					{% endif %}
 					</div>
 					<div class="filter-box col-md-4">
@@ -119,24 +125,23 @@
 							</h5>
 							<!--[[appliedFilters]]-->
 							<div class="card-body">
-								<form id="filter-form" method="GET" action="{% url 'search' %}">
-									<div v-for="(filter, key) in resultFilters" :key="key">
-										<a class="collapsed" data-toggle="collapse" :href="'#' + key" aria-expanded="false" :aria-controls="key">
-											<h5>
-												[[filter.displayName]] ([[filter.total]])	<i class="fas fa-angle-down rotate-icon"></i>
-											</h5>
-										</a>
-										<div :id="key" class="collapse" role="tabpanel">
-											<div v-for="(option, index) in filter.options" key="index" class="ui checked checkbox">
-												<label>
-													<input class="source-checkbox" type="checkbox" :value="option.name"
-													urls="{% url 'search' %}" v-model="appliedFilters[key]" v-on:click="filterResults">
-													[[option.name]]  ([[option.count]])
-												</label>
-											</div>
+								<button class="btn btn-primary" @click="removeFilters">Clear Filters</button>
+								<div v-for="(filter, key) in resultFilters" :key="key">
+									<a class="collapsed" data-toggle="collapse" :href="'#' + key" aria-expanded="false" :aria-controls="key">
+										<h5>
+											[[filter.displayName]] ([[filter.total]])	<i class="fas fa-angle-down rotate-icon"></i>
+										</h5>
+									</a>
+									<div :id="key" class="collapse" role="tabpanel">
+										<div v-for="(option, index) in filter.options" key="index" class="ui checked checkbox">
+											<label>
+												<input class="source-checkbox" type="checkbox" :value="option.name"
+												urls="{% url 'search' %}" v-model="appliedFilters[key]" @change="filterResults">
+												[[option.name]]  ([[option.count]])
+											</label>
 										</div>
-									</div>							
-								</form>
+									</div>
+								</div>							
 							</div>
 						</div>
 					</div>
@@ -148,124 +153,156 @@
 
 {% block vuejs %}
 <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'></script>
+<script src='https://unpkg.com/vue-router@2.0.0/dist/vue-router.js'></script>
 <script type='text/javascript'>
-      new Vue({
+	const router = new VueRouter({
+		scrollBehavior (to, from, savedPosition) {
+			return { x: 0, y: 0 };
+		},
+        mode: 'history',
+     });
+
+    const app =  new Vue({
+		router,
         delimiters: ['[[', ']]'],
         el: '#app',
         // define data - initial display text
         data: {
-          query: $('#search-box').val(),
+		  query: "{{ query }}",
+		  context: '',
+		  loading: true,
+		  resultsLoading: false,
+
 		  results: [],
 		  resultFilters: [],
 		  appliedFilters: {},
-		  page: 1
+
+		  page: "{{ page }}",
+		  nextPage: 0,
+		  prevPage: 0,
+		  prevPageLimit: 0,
+		  nextPageLimit: 0,
+		  prevPageList: [],
+		  nextPageList: [],
+
+		  total: 0,
+		  position: 0,
+		  pageSize: 0
         },
 		beforeMount() {
-			console.log(this.query);
-			this.getResults(this.query, 1);
+			this.query = $('#search-box').val();
+			this.getResults();
 		},
 		methods: {
-			getResults: function(query) {
+			getResults: function() {
+				this.loading = true;
 				axios
-				.get(`/api/search/${query}/1`)
+				.get(`/api/search/${this.query}/${this.page}`)
 				.then(response => {
 					const data = response.data.context;
 					
-					this.query = data.query;
 					this.results = data.results;
 					this.resultFilters = data.filters;
-
+					
 					for(const [key, value] of Object.entries(this.resultFilters)) {
 						this.appliedFilters[key] = [];
 					}
-				})
+
+					this.total = data.total;
+					this.pageSize = data.pageSize;
+					this.position = data.position;
+					this.nextResults = data.nextResults;
+					this.prevResults = data.prevResults;
+					this.nextPage = data.nextPage;
+					this.prevPage = data.prevPage;
+					this.prevPageLimit = data.prevPageLimit;
+					this.nextPageLimit = data.nextPageLimit;
+					this.prevPageList = data.prevPageList;
+					this.nextPageList = data.nextPageList;
+
+					this.loading = false;
+				});
 			}, 
 
-			filterResults: function() {
+			getPage: function(page) {
+				this.resultsLoading = true;
 				var filter_query = '';
 				for (let [key, filterList] of Object.entries(this.appliedFilters)) {
 					console.log(key + " " + filterList);
 					filter_query = filter_query.concat(`${key}=${filterList}&`)
 				}
-				console.log(filter_query);
+
+				this.resultsLoading = true;
+				axios
+				.get(`/api/search/${this.query}/${page}?${filter_query}`)
+				.then(response => {
+					const data = response.data.context;
+					this.results = response.data.context.results;
+					this.position = data.position;
+					this.nextResults = data.nextResults;
+					this.prevResults = data.prevResults;
+					this.nextPage = data.nextPage;
+					this.prevPage = data.prevPage;
+					this.prevPageLimit = data.prevPageLimit;
+					this.nextPageLimit = data.nextPageLimit;
+					this.prevPageList = data.prevPageList;
+					this.nextPageList = data.nextPageList;
+
+					this.resultsLoading = false;
+					this.page = page;
+					this.$router.push({query: {query: this.query, page: this.page}})
+				});
+			},
+
+			getPageURL: function(page) {
+				return `${window.location.pathname}?query=${this.query}&page=${page}`;
+			},
+
+			filterResults: function() {
+				this.resultsLoading = true;
+				var filter_query = '';
+				for (let [key, filterList] of Object.entries(this.appliedFilters)) {
+					console.log(key + " " + filterList);
+					filter_query = filter_query.concat(`${key}=${filterList}&`)
+				}
 
 				axios
 				.get(`/api/search/${this.query}/1?${filter_query}`)
 				.then(response => {
+					this.page = 1;
+					const data = response.data.context;
 					this.results = response.data.context.results;
-				})
+					this.resultsLoading = false;
+
+					this.total = data.total;
+					this.pageSize = data.pageSize;
+					this.position = data.position;
+					this.nextResults = data.nextResults;
+					this.prevResults = data.prevResults;
+					this.nextPage = data.nextPage;
+					this.prevPage = data.prevPage;
+					this.prevPageLimit = data.prevPageLimit;
+					this.nextPageLimit = data.nextPageLimit;
+					this.prevPageList = data.prevPageList;
+					this.nextPageList = data.nextPageList;
+				});
 			}, 
-		}
+
+			removeFilters: function() {
+				$("input:checkbox").prop('checked', false);
+				const appliedFilters = this.appliedFilters;
+
+				jQuery.each(appliedFilters, function(filter, value) {
+					appliedFilters[filter] = [];
+				});
+
+				this.filterResults();
+			},
+
+			getDocUrl: function(docId) {
+				return `{% url 'document' document_id=1 %}`.replace('1', docId);
+			}
+		},
       })
 </script>
-{% endblock %}
-
-{% block javascript %}
-<!--
-<script>
-	$(document).ready(function(){
-		if(!sessionStorage.activeCollapses) {
-			sessionStorage.activeCollapses = []
-		}
-
-		$('a[data-toggle="collapse"]').on('show.bs.collapse', function(e) {
-			sessionStorage.activeCollapses.push(this)
-		});
-
-		$('a[data-toggle="collapse"]').on('hide.bs.collapse', function(e) {
-			sessionStorage.activeCollapses.push(this)
-		});
-
-
-		var activeCollapses = sessionStorage.getItem('activeCollapses');
-
-		if(activeCollapses){
-			for(const header in activeCollapses) {
-				$(header).collapse('show');
-			}
-		}
-	});
-
-	form = document.getElementById('filter-form');
-
-	if(form.addEventListener) {
-    	form.addEventListener("submit", submitFn, false);
-	} else {
-    	form.attachEvent("onsubmit", submitFn); //IE8
-	}
-
-	function submitFn(event) {
-		event.preventDefault();
-
-		var checkboxes = [];
-		$('input:checked').each(function() {
-			checkboxes.push($(this));
-			$(this).val("checked", false);
-		});
-
-		checked = {}
-		
-		for(i = 0; i < checkboxes.length; i++) {
-			var box = checkboxes[i];
-			key = box.attr('name');
-			!(key in checked) && (checked[key] = [])
-
-			checked[key].push(box.attr('value'));
-		}
-		
-		for([key, value] of Object.entries(checked)) {
-			var checkedStr = value.join();
-
-			var input = $("<input>", {type: "hidden", name: key, value: checkedStr});
-			
-			console.log("INPUT:  " + input.name);
-			$(form).append(input);
-		}
-		
-		form.submit();
-		return false;
-	}
-
-</script>
--->
 {% endblock %}
