@@ -86,3 +86,7 @@
 .description p {
     margin-bottom: 0;
 }
+
+[v-cloak] {
+    display: none;
+}

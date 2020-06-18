@@ -102,3 +102,7 @@
 i.fas.fa-angle-down.rotate-icon {
     float: right;
 }
+
+[v-cloak] {
+    display: none;
+}
