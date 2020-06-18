@@ -521,6 +521,7 @@ def Document(request, document_id):
     context['json'] = json.dumps(result, separators=(',', ':'))
     context['source'] = result['_source']['source_x']
     context['journal'] = result['_source']['journal']
+    context['year'] = result['_source']['publish_year']
 
     if not context['journal']:
         context['journal'] = 'N/A'

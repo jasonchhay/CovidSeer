@@ -106,3 +106,11 @@ i.fas.fa-angle-down.rotate-icon {
 [v-cloak] {
     display: none;
 }
+
+.pager a {
+    color: #007bff !important;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
