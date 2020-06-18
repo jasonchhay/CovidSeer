@@ -341,8 +341,9 @@ def search(request, query, page):
 
                 # removing local folder path
                 f['url'] = result['_source']['metadata']['title']
-
                 f['title'] = result['_source']['metadata']['title']
+                f['year'] = result['_source']['publish_year']
+
                 f['authors'] = __get_author_list(result)
 
                 # f.description = str(result['_source']['meta']['raw']['description'])

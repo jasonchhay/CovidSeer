@@ -61,12 +61,12 @@
 							
 							<div class="result" v-for="hit in results" :key="hit.resultid" v-cloak>
 								<div class="url" >
-									<h5 class="result-title"><b><a :href="getDocUrl(hit.resultid)">[[hit.title]]</a></b></h5>
+									<h5 class="result-title"><b><a :href="getDocUrl(hit.resultid)">[[hit.title]] ([[hit.year]])</a></b></h5>
 									<!--<p>{{ hit.c }} </p></div>-->
 									<div class="author-container">
 										<span v-for="(author, index) in hit.authors" key="index">
 											<div class="author">
-												<p>[[author.name]]</p>
+												<a @click="addClickableFilter('author', author.name)">[[author.name]]</a>
 												<div class="author-content">
 													<h4>[[author.name]]</h4>
 													<table>
@@ -94,13 +94,18 @@
 										</div>
 									</span>
 									<div class="journal row">
-										<div class="col-md-12"><b>Journal:</b>[[hit.journal]]</div>
-									</div>
-									<div class="source row">
-										<div class="col-md-6">
+										<div class="col-md-6"><b>Journal:</b>[[hit.journal]]</div>
+										<div class="col-md-6 doi-link">
 											<b>Source:</b> [[hit.source]]
 										</div>
-										<div class="col-md-6 doi-link">
+									</div>
+									<div class="journal row">
+										<div class="col-md-12">
+											<b>Keywords:</b>
+										</div>
+									</div>
+									<div class="source row">
+										<div class="col-md-12 doi-link">
 											<a href="https://doi.org/[[hit.doi]]" target="_blank" class="doi-link">View full article</a>
 										</div>
 									</div>
@@ -301,6 +306,8 @@
 			},
 
 			filterResults: function() {
+				this.$router.push({query: {query: this.query, page: this.page}})
+
 				this.resultsLoading = true;
 				var filter_query = '';
 				for (let [key, filterList] of Object.entries(this.appliedFilters)) {
@@ -365,6 +372,12 @@
 				this.customFiltersText[key] = "";
 				this.customFilters[key].push(newFilter);
 				this.appliedCustomFilters[key].push(newFilter);
+				this.filterResults();
+			},
+
+			addClickableFilter: function(key, value) {
+				this.customFilters[key].push(value);
+				this.appliedCustomFilters[key].push(value);
 				this.filterResults();
 			},
 
