@@ -557,6 +557,18 @@ def get_recommendations(request,query):
     results = res['hits']['hits']
 
     if len(results) == 0:
-        raise Http404("Document does not exist")
-
-    return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
+        raise Http404("No similar papers available")
+    else:
+        recommendations=[]
+        for result in results:
+            paper = dict()
+            paper['doc_id'] = result['_source']['cord_uid']
+            paper['title'] = result['_source']['metadata']['title']
+            paper['abstract'] =  result['_source']['abstract']
+            paper['author'] = [author['fullname'] for author in result['_source']['metadata']['authors']]
+            paper['pulication_year'] = result['_source']['publish_year']
+            paper['doi'] =  result['_source']['doi']
+            paper['journal'] =  result['_source']['journal']
+            recommendations.append(paper)
+    
+    return HttpResponse(json.dumps({"recom":recommendations}, sort_keys=True, indent=4), content_type="application/json")
