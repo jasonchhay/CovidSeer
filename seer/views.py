@@ -520,6 +520,8 @@ def Document(request, document_id):
     context['json'] = json.dumps(result, separators=(',', ':'))
     context['source'] = result['_source']['source_x']
     context['journal'] = result['_source']['journal']
+    context['keyphrases'] = result['_source']['keyphrases']
+    context['similar_papers'] = result['_source']['similar_papers']
 
     if not context['journal']:
         context['journal'] = 'N/A'
@@ -531,6 +533,23 @@ def DocumentJson(request, document_id):
         "query": {
             "match": {
                 "_id": document_id
+            }
+        }
+    }
+    res = es.search(index=ELASTIC_INDEX, body=body)
+    results = res['hits']['hits']
+
+    if len(results) == 0:
+        raise Http404("Document does not exist")
+
+    return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
+
+def get_recommendations(request,query):
+    body = {
+        "query" : {
+            "terms" : {
+                "cord_uid" : query, #query is an array of similar papers like this ["krb1eidw","italbsed"],
+                "boost" : 1.0
             }
         }
     }
