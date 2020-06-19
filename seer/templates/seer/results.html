@@ -94,7 +94,7 @@
 										</div>
 									</span>
 									<div class="journal row">
-										<div class="col-md-6"><b>Journal:</b>[[hit.journal]]</div>
+										<div class="col-md-6"><b>Journal:</b> [[hit.journal]]</div>
 										<div class="col-md-6 doi-link">
 											<b>Source:</b> [[hit.source]]
 										</div>
@@ -102,6 +102,13 @@
 									<div class="journal row">
 										<div class="col-md-12">
 											<b>Keywords:</b>
+												<span v-for="(keyphrase, index) in hit.keyphrases" key="index">
+													<span v-if="index != 0">, </span>
+													<span style="text-decoration: underline;">[[keyphrase]]</span>	
+												</span>
+												<span v-if="hit.keyphrases.length === 0">
+													N/A
+												</span>
 										</div>
 									</div>
 									<div class="source row">

@@ -11,5 +11,7 @@ urlpatterns = [
 
     # API
     path('api/search/<query>/<int:page>', views.search, name='api_search_index'),
+    path('api/doc/similar_papers/<document_id>', views.get_recommendations, name='api_get_recommendations'),
+
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

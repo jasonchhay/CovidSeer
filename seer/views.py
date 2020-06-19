@@ -14,7 +14,7 @@ ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
 
 # USER = open("elastic-settings.txt").read().split("\n")[1]
 # PASSWORD = open("elastic-settings.txt").read().split("\n")[2]
-ELASTIC_INDEX = 'cord_temp'
+ELASTIC_INDEX = 'cord_feat'
 
 # open connection to Elastic
 es = Elasticsearch(['http://csxindex05:9200/'], verify_certs=True)
@@ -40,24 +40,25 @@ def __get_author_list(result):
         author = dict()
 
         # Build the name for the author
-        first_name = data['first']
-        mid_name = data['middle']
+
+        if 'first' in data:
+            first_name = data['first']
+        else:
+            first_name = ""
+        
+        if 'middle' in data:
+            mid_name = data['middle']
+        else:
+            mid_name = ""
 
         if len(mid_name) > 0:
             first_name += " " + mid_name[0]
 
         last_name = data['last']
-        suffix = data['suffix']
 
-        author['name'] = ' '.join([first_name, last_name, suffix])
+        author['name'] = ' '.join([first_name, last_name])
 
-        if suffix is None or suffix == '':
-            author['name'] = ' '.join([first_name, last_name])
-            #print(first_name)
-        else:
-            author['name'] = ' '.join([first_name, last_name, suffix])
-            #print("SUFFIX:", suffix)
-
+        """
         # Build the affiliation of the author
         if len(data['affiliation']) > 0:
 
@@ -81,9 +82,10 @@ def __get_author_list(result):
             author['institution'] = data['affiliation']['institution'] or 'N/A'
             author['laboratory'] = data['affiliation']['laboratory'] or 'N/A'
         else:
-            author['location'] = 'N/A'
-            author['institution'] = 'N/A'
-            author['laboratory'] = 'N/A'
+        """
+        author['location'] = 'N/A'
+        author['institution'] = 'N/A'
+        author['laboratory'] = 'N/A'
 
         #print(author)
         author_list.append(author)
@@ -332,17 +334,20 @@ def search(request, query, page):
                     continue
 
                 f['content'] = result['_source']['body_text']
+                """
                 if len(result['_source']['metadata']['authors'])>0:
                     if 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
                         f['affiliation'] = result['_source']['metadata']['authors'][0]['affiliation']['location']
                 else:
                     f['affiliation'] = ''
+                """
                 # rawpath= result['_source']['file']['url']
 
                 # removing local folder path
                 f['url'] = result['_source']['metadata']['title']
                 f['title'] = result['_source']['metadata']['title']
                 f['year'] = result['_source']['publish_year']
+                f['keyphrases'] = result['_source']['keyphrases']
 
                 f['authors'] = __get_author_list(result)
 
@@ -522,6 +527,8 @@ def Document(request, document_id):
     context['source'] = result['_source']['source_x']
     context['journal'] = result['_source']['journal']
     context['year'] = result['_source']['publish_year']
+    context['keyphrases'] = result['_source']['keyphrases']
+    context['similar_papers'] = result['_source']['similar_papers']
 
     if not context['journal']:
         context['journal'] = 'N/A'
@@ -533,6 +540,24 @@ def DocumentJson(request, document_id):
         "query": {
             "match": {
                 "_id": document_id
+            }
+        }
+    }
+    res = es.search(index=ELASTIC_INDEX, body=body)
+    results = res['hits']['hits']
+
+    if len(results) == 0:
+        raise Http404("Document does not exist")
+
+    return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
+
+@api_view(['GET'])
+def get_recommendations(request, doc_id):
+    body = {
+        "query" : {
+            "terms" : {
+                "cord_uid" : doc_id, #query is an array of similar papers like this ["krb1eidw","italbsed"],
+                "boost" : 1.0
             }
         }
     }

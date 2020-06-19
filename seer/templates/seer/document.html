@@ -28,6 +28,7 @@
 			<div style="width: 100%;"><a href="javascript:history.back()">Back to Results</a></div>
 			<div><h1 id="document-title">{{ title }} ({{year}})</h1></div>
 			<div class="author-container">
+				{{ similar_papers }}
                 {% for author in authors %}
                     <div class="author">
 	                    <p>{{author.name}}</p>
