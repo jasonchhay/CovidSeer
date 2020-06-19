@@ -14,7 +14,7 @@ ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
 
 # USER = open("elastic-settings.txt").read().split("\n")[1]
 # PASSWORD = open("elastic-settings.txt").read().split("\n")[2]
-ELASTIC_INDEX = 'cord_temp'
+ELASTIC_INDEX = 'cord_features'
 
 # open connection to Elastic
 es = Elasticsearch(['http://csxindex05:9200/'], verify_certs=True)
@@ -35,58 +35,59 @@ def Home(request):
 def __get_author_list(result):
 
     author_list = []
+    if len(result['_source']['metadata']['authors'])>0:
+        for data in result['_source']['metadata']['authors']:
+            author = dict()
 
-    for data in result['_source']['metadata']['authors']:
-        author = dict()
+            # Build the name for the author
+            first_name = data['first']
+            mid_name = data['middle']
 
-        # Build the name for the author
-        first_name = data['first']
-        mid_name = data['middle']
+            if len(mid_name) > 0:
+                first_name += " " + mid_name[0]
 
-        if len(mid_name) > 0:
-            first_name += " " + mid_name[0]
+            last_name = data['last']
+            # suffix = data['suffix']
+            suffix =''
 
-        last_name = data['last']
-        suffix = data['suffix']
-
-        author['name'] = ' '.join([first_name, last_name, suffix])
-
-        if suffix is None or suffix == '':
-            author['name'] = ' '.join([first_name, last_name])
-            #print(first_name)
-        else:
             author['name'] = ' '.join([first_name, last_name, suffix])
-            #print("SUFFIX:", suffix)
 
-        # Build the affiliation of the author
-        if len(data['affiliation']) > 0:
+            if suffix is None or suffix == '':
+                author['name'] = ' '.join([first_name, last_name])
+                #print(first_name)
+            else:
+                author['name'] = ' '.join([first_name, last_name, suffix])
+                #print("SUFFIX:", suffix)
 
-            # Build the geographic location of the author
-            if data['affiliation']['location']:
-                location = data['affiliation']['location']
+            # Build the affiliation of the author
+            if 'affiliation' in data and len(data['affiliation']) > 0:        
 
-                location_list = list()
+                # Build the geographic location of the author
+                if data['affiliation']['location']:
+                    location = data['affiliation']['location']
 
-                if 'settlement' in location:
-                    location_list.append(location['settlement'])
-                if 'region' in location:
-                    location_list.append(location['region'])
-                if 'country' in location:
-                    location_list.append(location['country'])
+                    location_list = list()
 
-                author['location'] = ", ".join(location_list)
+                    if 'settlement' in location:
+                        location_list.append(location['settlement'])
+                    if 'region' in location:
+                        location_list.append(location['region'])
+                    if 'country' in location:
+                        location_list.append(location['country'])
+
+                    author['location'] = ", ".join(location_list)
+                else:
+                    author['location'] = 'N/A'
+
+                author['institution'] = data['affiliation']['institution'] or 'N/A'
+                author['laboratory'] = data['affiliation']['laboratory'] or 'N/A'
             else:
                 author['location'] = 'N/A'
+                author['institution'] = 'N/A'
+                author['laboratory'] = 'N/A'
 
-            author['institution'] = data['affiliation']['institution'] or 'N/A'
-            author['laboratory'] = data['affiliation']['laboratory'] or 'N/A'
-        else:
-            author['location'] = 'N/A'
-            author['institution'] = 'N/A'
-            author['laboratory'] = 'N/A'
-
-        #print(author)
-        author_list.append(author)
+            #print(author)
+            author_list.append(author)
 
     return author_list
 
@@ -114,12 +115,12 @@ def aggs():
                 },
                 "uniq_years":{
                     "cardinality" : {
-                        "field" : "publish_year.keyword"
+                        "field" : "publish_year"
                     }
                 },
                 "year":{
                     "terms":{
-                        "field":"publish_year.keyword"
+                        "field":"publish_year"
                     }
                 },
                 "contains_abstract":{
@@ -205,7 +206,7 @@ def add_year_filters(year):
         for x in year:
             year_filter['bool']['should'].append({
                 "match_phrase": {
-                    "publish_year.keyword": {
+                    "publish_year": {
                       "query": x
                         }
                     }
@@ -353,7 +354,7 @@ def search(request, query, page):
 
                 f['content'] = result['_source']['body_text']
                 if len(result['_source']['metadata']['authors'])>0:
-                    if 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
+                    if 'affiliation' in result['_source']['metadata']['authors'] and 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
                         f['affiliation'] = result['_source']['metadata']['authors'][0]['affiliation']['location']
                 else:
                     f['affiliation'] = ''
