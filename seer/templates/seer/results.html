@@ -104,7 +104,11 @@
 											<b>Keywords:</b>
 												<span v-for="(keyphrase, index) in hit.keyphrases" key="index">
 													<span v-if="index != 0">, </span>
-													<span style="text-decoration: underline;">[[keyphrase]]</span>	
+													<span style="text-decoration: underline;">
+														<a @click="addClickableFilter('keyphrase', keyphrase)">
+															[[keyphrase]]
+														</a>
+													</span>	
 												</span>
 												<span v-if="hit.keyphrases.length === 0">
 													N/A
@@ -272,7 +276,9 @@
 								this.appliedCustomFilters[key] = [];
 								this.customFilters[key] = [];
 								this.customFiltersText[key] = '';
-							}	
+							}
+							this.customFilters['keyphrase'] = [];
+							this.appliedCustomFilters['keyphrase'] = [];
 
 							this.updateData(data);
 						}
@@ -325,6 +331,8 @@
 					filter_query = filter_query.concat(`${key}=${filterList}&`)
 				}
 
+				filter_query = filter_query.concat(`${'keyphrase'}=${this.appliedCustomFilters['keyphrase']}&`)
+				console.log(filter_query);
 				axios
 				.get(`/api/search/${this.query}/1?${filter_query}`)
 				.then(response => {
@@ -385,6 +393,7 @@
 			addClickableFilter: function(key, value) {
 				this.customFilters[key].push(value);
 				this.appliedCustomFilters[key].push(value);
+				console.log(this.appliedCustomFilters);
 				this.filterResults();
 			},
 

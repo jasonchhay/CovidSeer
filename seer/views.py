@@ -158,10 +158,13 @@ def aggs():
     
     return agg_query
 
-def add_source_filters(template,filter_query,source):
+def add_source_filters(source):
     source = source.split(',')
-    source_filter = template
-
+    source_filter = {
+        "bool":{
+            "should":[]
+        }
+    }
     if len(source)>0:
         for x in source:
             source_filter['bool']['should'].append({
@@ -171,13 +174,16 @@ def add_source_filters(template,filter_query,source):
                         }
                     }
                 })
-        filter_query.append(source_filter)
-    return filter_query
+    return source_filter
 
 
-def add_journal_filters(template,filter_query,journal):
+def add_journal_filters(journal):
     journal = journal.split(',')
-    journal_filter = template
+    journal_filter = {
+        "bool":{
+            "should":[]
+        }
+    }
     if len(journal)>0:
         for x in journal:
             journal_filter['bool']['should'].append({
@@ -187,13 +193,16 @@ def add_journal_filters(template,filter_query,journal):
                         }
                     }
                 })
-        filter_query.append(journal_filter)
-    return filter_query
+    return journal_filter
 
 
-def add_year_filters(template,filter_query,year):
+def add_year_filters(year):
     year = year.split(',')
-    year_filter = template
+    year_filter = {
+        "bool":{
+            "should":[]
+        }
+    }
     if len(year)>0:
         for x in year:
             year_filter['bool']['should'].append({
@@ -203,12 +212,15 @@ def add_year_filters(template,filter_query,year):
                         }
                     }
                 })
-        filter_query.append(year_filter)
-    return filter_query
+    return year_filter
 
-def add_authors_filters(template,filter_query,author):
+def add_authors_filters(author):
     author = author.split(',')
-    author_filter = template
+    author_filter = {
+        "bool":{
+            "should":[]
+        }
+    }
     if len(author)>0:
         for x in author:
             author_filter['bool']['should'].append({
@@ -218,8 +230,17 @@ def add_authors_filters(template,filter_query,author):
                         }
                     }
                 })
-        filter_query.append(author_filter)
-    return filter_query
+    return author_filter
+
+def add_keyphrase_filters(keyphrase):
+    keyphrase_filter = {
+                    "multi_match": {
+                            "query": keyphrase,
+                            "fields":  ["body_text","abstract^2", "metadata.title^3"],
+                            "type": "cross_fields"
+                        }
+                     }                
+    return keyphrase_filter
 
 def remove_punct(my_str):
     punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
@@ -254,36 +275,23 @@ def search(request, query, page):
     abstract = request.GET.get('abstract') or ''
     author = request.GET.get('author') or ''
     year = request.GET.get('year') or ''
-    
+    keyphrase = request.GET.get('keyphrase') or ''
     nquery = query.lower()
     nquery = remove_punct(nquery)
     nquery = remove_stop(nquery)
     
-    print(nquery)
+    print("Checking query in search:",nquery)
     print("SOURCE:", source)
     print("JOURNAL:", journal)
     print("FULL TEXT:", full_text)
     print("ABSTRACT:", abstract)
     print("AUTHOR:", author)
 
-    template = {
-        "bool":{
-            "should":[]
-        }
-    }
-    filter_query =[]
-    if source:
-        filter_query = add_source_filters(template,filter_query,source)
-    if journal:
-        filter_query = add_journal_filters(template,filter_query,journal)
-    if year:
-        filter_query = add_year_filters(template,filter_query,year)
-    if author:
-        filter_query = add_authors_filters(template,filter_query,author)
+    
+    
     size = 15
     start = (page - 1) * size
 
-    print(filter_query)
     body = {
         "from": start,
         "size": size,
@@ -304,11 +312,23 @@ def search(request, query, page):
         "aggs" : aggs(),
         'highlight': {'fields': {'body_text': {}, 'abstract.text': {}}}
     }
-    if len(filter_query)>0:
-        for each_filter in filter_query:
-            body['query']['bool']['must'].append(each_filter)
-        #body['query']['bool']['minimum_should_match'] = 1
-        body = body
+
+    if source:
+        body['query']['bool']['must'].append(add_source_filters(source))
+    if journal:
+        body['query']['bool']['must'].append([add_journal_filters(journal)])
+    if year:
+        body['query']['bool']['must'].append(add_year_filters(year))
+    if author:
+        body['query']['bool']['must'].append(add_authors_filters(author))
+    if keyphrase:
+        body['query']['bool']['filter'].append(add_keyphrase_filters(keyphrase))
+    
+    # if len(filter_query)>0:
+    #     for each_filter in filter_query:
+    #         body['query']['bool']['must'].append(each_filter)
+    #     #body['query']['bool']['minimum_should_match'] = 1
+    #     body = body
 
     res = es.search(index=ELASTIC_INDEX, body=body)
     #print("RESULTS", res)
@@ -367,9 +387,8 @@ def search(request, query, page):
                 # f.filename= str(imageid)+'.png'
                 f['doi'] = result['_source']['doi']
                 f['source'] = result['_source']['source_x']
-
+                f['keyphrases'] = result['_source']['keyphrases']
                 f['journal'] = result['_source']['journal']
-
                 if not f['journal']:
                     f['journal'] = 'N/A'
 
@@ -427,6 +446,7 @@ def search(request, query, page):
                     jnls.append({'name':jnl['key'],'count':jnl['doc_count']})                                
             #Adding list of years
             total_years = len(res['aggregations']['year']['buckets'])
+
             yrs =[]
             if (total_years > 0):
                 for yr in res['aggregations']['year']['buckets']:
@@ -528,7 +548,6 @@ def Document(request, document_id):
     context['journal'] = result['_source']['journal']
     context['year'] = result['_source']['publish_year']
     context['keyphrases'] = result['_source']['keyphrases']
-    context['similar_papers'] = result['_source']['similar_papers']
 
     if not context['journal']:
         context['journal'] = 'N/A'
@@ -552,11 +571,12 @@ def DocumentJson(request, document_id):
     return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
 
 @api_view(['GET'])
-def get_recommendations(request, doc_id):
+def get_recommendations(request, document_id):
+    print("TEST")
     body = {
         "query" : {
             "terms" : {
-                "cord_uid" : doc_id, #query is an array of similar papers like this ["krb1eidw","italbsed"],
+                "cord_uid" : document_id, #query is an array of similar papers like this ["krb1eidw","italbsed"],
                 "boost" : 1.0
             }
         }
@@ -565,6 +585,18 @@ def get_recommendations(request, doc_id):
     results = res['hits']['hits']
 
     if len(results) == 0:
-        raise Http404("Document does not exist")
-
-    return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
+        raise Http404("No similar papers available")
+    else:
+        recommendations=[]
+        for result in results:
+            paper = dict()
+            paper['doc_id'] = result['_source']['cord_uid']
+            paper['title'] = result['_source']['metadata']['title']
+            paper['abstract'] =  result['_source']['abstract']
+            paper['author'] = [author['fullname'] for author in result['_source']['metadata']['authors']]
+            paper['pulication_year'] = result['_source']['publish_year']
+            paper['doi'] =  result['_source']['doi']
+            paper['journal'] =  result['_source']['journal']
+            recommendations.append(paper)
+    
+    return HttpResponse(json.dumps({"recom":recommendations}, sort_keys=True, indent=4), content_type="application/json")

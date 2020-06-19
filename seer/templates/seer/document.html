@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-	<div class="container">
+	<div class="container" id="app">
 		<div class="document-container">
 			<div id="search-container">
 				<a href="{% url 'home' %}">
@@ -28,7 +28,6 @@
 			<div style="width: 100%;"><a href="javascript:history.back()">Back to Results</a></div>
 			<div><h1 id="document-title">{{ title }} ({{year}})</h1></div>
 			<div class="author-container">
-				{{ similar_papers }}
                 {% for author in authors %}
                     <div class="author">
 	                    <p>{{author.name}}</p>
@@ -95,6 +94,46 @@
 {% endblock %}
 
 {% block javascript %}
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'></script>
+	<script src='https://unpkg.com/vue-router@2.0.0/dist/vue-router.js'></script>
+	<script type='text/javascript'>
+		const router = new VueRouter({
+			scrollBehavior (to, from, savedPosition) {
+				return { x: 0, y: 0 };
+			},
+			mode: 'history',
+		});
+
+		const app =  new Vue({
+			router,
+			delimiters: ['[[', ']]'],
+			el: '#app',
+
+			data: {
+				docId: "{{ docId }}",
+				similarDocuments: {},
+				loading: false
+			},
+			beforeMount() {
+				this.getSimilarDocuments();
+			},
+			methods: {
+				getSimilarDocuments: function() {	
+					this.loading = true;					
+					axios	
+					.get(`/api/doc/similar_papers/${this.docId}`)
+					.then(response => {	
+						if(response.request.status === 200) {
+							const data = response.data.context;	
+							this.similarDocuments = data.recom;
+							this.loading = false;
+							console.log(similarDocuments);
+						};
+					});
+				}
+			}
+		});
+	</script>
 	<script>
 		var height = $('#doc-body')[0].scrollHeight;
 		var show = true;
