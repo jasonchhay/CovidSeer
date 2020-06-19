@@ -14,7 +14,7 @@ ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
 
 # USER = open("elastic-settings.txt").read().split("\n")[1]
 # PASSWORD = open("elastic-settings.txt").read().split("\n")[2]
-ELASTIC_INDEX = 'cord_feat'
+ELASTIC_INDEX = 'cord_features'
 
 # open connection to Elastic
 es = Elasticsearch(['http://csxindex05:9200/'], verify_certs=True)
@@ -35,60 +35,59 @@ def Home(request):
 def __get_author_list(result):
 
     author_list = []
+    if len(result['_source']['metadata']['authors'])>0:
+        for data in result['_source']['metadata']['authors']:
+            author = dict()
 
-    for data in result['_source']['metadata']['authors']:
-        author = dict()
-
-        # Build the name for the author
-
-        if 'first' in data:
+            # Build the name for the author
             first_name = data['first']
-        else:
-            first_name = ""
-        
-        if 'middle' in data:
             mid_name = data['middle']
-        else:
-            mid_name = ""
 
-        if len(mid_name) > 0:
-            first_name += " " + mid_name[0]
+            if len(mid_name) > 0:
+                first_name += " " + mid_name[0]
 
-        last_name = data['last']
+            last_name = data['last']
+            # suffix = data['suffix']
+            suffix =''
 
-        author['name'] = ' '.join([first_name, last_name])
+            author['name'] = ' '.join([first_name, last_name, suffix])
 
-        """
-        # Build the affiliation of the author
-        if len(data['affiliation']) > 0:
+            if suffix is None or suffix == '':
+                author['name'] = ' '.join([first_name, last_name])
+                #print(first_name)
+            else:
+                author['name'] = ' '.join([first_name, last_name, suffix])
+                #print("SUFFIX:", suffix)
 
-            # Build the geographic location of the author
-            if data['affiliation']['location']:
-                location = data['affiliation']['location']
+            # Build the affiliation of the author
+            if 'affiliation' in data and len(data['affiliation']) > 0:        
 
-                location_list = list()
+                # Build the geographic location of the author
+                if data['affiliation']['location']:
+                    location = data['affiliation']['location']
 
-                if 'settlement' in location:
-                    location_list.append(location['settlement'])
-                if 'region' in location:
-                    location_list.append(location['region'])
-                if 'country' in location:
-                    location_list.append(location['country'])
+                    location_list = list()
 
-                author['location'] = ", ".join(location_list)
+                    if 'settlement' in location:
+                        location_list.append(location['settlement'])
+                    if 'region' in location:
+                        location_list.append(location['region'])
+                    if 'country' in location:
+                        location_list.append(location['country'])
+
+                    author['location'] = ", ".join(location_list)
+                else:
+                    author['location'] = 'N/A'
+
+                author['institution'] = data['affiliation']['institution'] or 'N/A'
+                author['laboratory'] = data['affiliation']['laboratory'] or 'N/A'
             else:
                 author['location'] = 'N/A'
+                author['institution'] = 'N/A'
+                author['laboratory'] = 'N/A'
 
-            author['institution'] = data['affiliation']['institution'] or 'N/A'
-            author['laboratory'] = data['affiliation']['laboratory'] or 'N/A'
-        else:
-        """
-        author['location'] = 'N/A'
-        author['institution'] = 'N/A'
-        author['laboratory'] = 'N/A'
-
-        #print(author)
-        author_list.append(author)
+            #print(author)
+            author_list.append(author)
 
     return author_list
 
@@ -116,12 +115,12 @@ def aggs():
                 },
                 "uniq_years":{
                     "cardinality" : {
-                        "field" : "publish_year.keyword"
+                        "field" : "publish_year"
                     }
                 },
                 "year":{
                     "terms":{
-                        "field":"publish_year.keyword"
+                        "field":"publish_year"
                     }
                 },
                 "contains_abstract":{
@@ -207,7 +206,7 @@ def add_year_filters(year):
         for x in year:
             year_filter['bool']['should'].append({
                 "match_phrase": {
-                    "publish_year.keyword": {
+                    "publish_year": {
                       "query": x
                         }
                     }
@@ -356,7 +355,7 @@ def search(request, query, page):
                 f['content'] = result['_source']['body_text']
                 """
                 if len(result['_source']['metadata']['authors'])>0:
-                    if 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
+                    if 'affiliation' in result['_source']['metadata']['authors'] and 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
                         f['affiliation'] = result['_source']['metadata']['authors'][0]['affiliation']['location']
                 else:
                     f['affiliation'] = ''
@@ -547,7 +546,7 @@ def Document(request, document_id):
     context['source'] = result['_source']['source_x']
     context['journal'] = result['_source']['journal']
     context['year'] = result['_source']['publish_year']
-    context['keyphrases'] = result['_source']['keyphrases']
+    context['similar_papers'] = ','.join(result['_source']['similar_papers'])
 
     if not context['journal']:
         context['journal'] = 'N/A'
@@ -571,12 +570,15 @@ def DocumentJson(request, document_id):
     return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
 
 @api_view(['GET'])
-def get_recommendations(request, document_id):
-    print("TEST")
+def get_recommendations(request, similar_papers):
+    print("SIMILAR PAPERS:", similar_papers)
+    similar_papers = similar_papers.split(',')
+
+    print("SIMILAR PAPERS:", similar_papers)
     body = {
         "query" : {
             "terms" : {
-                "cord_uid" : document_id, #query is an array of similar papers like this ["krb1eidw","italbsed"],
+                "cord_uid" : similar_papers, #query is an array of similar papers like this ["krb1eidw","italbsed"],
                 "boost" : 1.0
             }
         }
@@ -590,7 +592,7 @@ def get_recommendations(request, document_id):
         recommendations=[]
         for result in results:
             paper = dict()
-            paper['doc_id'] = result['_source']['cord_uid']
+            paper['doc_id'] = result['_id']
             paper['title'] = result['_source']['metadata']['title']
             paper['abstract'] =  result['_source']['abstract']
             paper['author'] = [author['fullname'] for author in result['_source']['metadata']['authors']]
@@ -598,5 +600,4 @@ def get_recommendations(request, document_id):
             paper['doi'] =  result['_source']['doi']
             paper['journal'] =  result['_source']['journal']
             recommendations.append(paper)
-    
-    return HttpResponse(json.dumps({"recom":recommendations}, sort_keys=True, indent=4), content_type="application/json")
+        return HttpResponse(json.dumps({"recom":recommendations}, sort_keys=True, indent=4), content_type="application/json")
