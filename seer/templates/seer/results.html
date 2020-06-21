@@ -50,6 +50,11 @@
 							</div>
 						</div>
 						<div class="result-list" v-else>
+							<div v-for="(filter, key) in appliedCustomFilters" :key="key">
+								<div v-if="filter.length != 0">
+								<span><b>[[key]]: </b></span><span>[[filter.join(", ")]]</span>
+								</div>
+							</div>
 							{% if errormessage %}
 							<div id="navwrapper" style="margin-bottom: 20vh; font-weight: 800;">
 								{{ errormessage }}
@@ -375,6 +380,9 @@
 					appliedCustomFilters[filter] = [];
 				});
 
+				appliedCustomFilters['keyphrase'] = [];
+				customFilters['keyphrase'] = [];
+				
 				this.filterResults();
 			},
 

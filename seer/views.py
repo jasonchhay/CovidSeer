@@ -498,7 +498,7 @@ def search(request, query, page):
 
             context['prevPageList'] = [i for i in range(context['prevPageLimit'], context['page'])]
             context['nextPageList'] = [i for i in range(context['page'] + 1, context['nextPageLimit'] + 1)]
-
+            
             return Response({"context": context})
 
         else:
@@ -600,4 +600,52 @@ def get_recommendations(request, similar_papers):
             paper['doi'] =  result['_source']['doi']
             paper['journal'] =  result['_source']['journal']
             recommendations.append(paper)
-        return HttpResponse(json.dumps({"recom":recommendations}, sort_keys=True, indent=4), content_type="application/json")
+    
+    return HttpResponse(json.dumps({"recom":recommendations}, sort_keys=True, indent=4), content_type="application/json")
+
+
+    """
+    Generic function to search within the list of filters.
+    Pass jrnl in query from frontend to search in journals and athr for authors
+    query:field to apply search on
+    tosearch: keyword to search
+    Usage: search_in_filters(request,"jrnl","Virology")
+    """
+    def search_in_filters(request,query,tosearch):
+        if query=='jrnl':
+            key_to_search = "journal"
+        elif query=='athr':
+            key_to_search ="metadata.authors.fullname"
+
+        body = {       
+            "_source": "",
+            "query":{
+                "query_string":{
+                    "default_field" : key_to_search, "query" : "*"+tosearch+"*"
+                }
+            },
+            "highlight": {
+            "pre_tags": [""], 
+            "post_tags": [""], 
+            "fields": {
+                key_to_search: {}
+            }
+            }
+        }
+        print(body)
+        response = es.search(index=ELASTIC_INDEX, body=body)
+        results = response['hits']['hits']
+        print("In search_in_filters: ",len(results))
+
+        if len(results) == 0:
+            raise Http404("No results available")
+        else:
+            searchlist = []
+            for result in results:
+                searchlist += result['highlight'][key_to_search]
+                if len(list(set(searchlist)))>=10:
+                    break
+            searchlist = list(set(searchlist))
+            searchlist = searchlist[:10]
+            print("Searchresult:",searchlist)
+        return HttpResponse(json.dumps({"searched":searchlist}, sort_keys=True, indent=4), content_type="application/json")
