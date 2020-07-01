@@ -84,7 +84,7 @@
 }
 
 .description p {
-    margin-bottom: 0;
+    margin-bottom: 1em;
 }
 
 .doi-link {
@@ -113,4 +113,23 @@ i.fas.fa-angle-down.rotate-icon {
     cursor: pointer;
     -webkit-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
+}
+
+.pager {
+    text-align: center;
+    margin: auto;
+}
+
+.clear-filters-btn {
+    border-radius: 10px;
+    margin: 0 0 20px;
+}
+
+.filter-display-container {
+    margin-bottom: 1em;
+}
+
+.filter-display {
+    display: inline;
+    margin-right: 1em;
 }

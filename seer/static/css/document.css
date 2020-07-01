@@ -10,7 +10,7 @@ h3 {
 }
 
 p, .author-container {
-    line-height: 2.4;
+    line-height: 2;
 }
 
 .row {
@@ -49,7 +49,7 @@ p, .author-container {
 
 
 #doc-body {
-    height: 24rem;
+    height: 86rem;
     overflow: hidden;
 }
 
@@ -76,4 +76,14 @@ p, .author-container {
 
 #btn-container {
     margin-top: 1em;
+}
+
+.recommend-primary {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.recommend-secondary {
+    font-size: .9em;
+    color: #8a8989;
 }

@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 import json
+import os
 
 ERR_QUERY_NOT_FOUND = '<h1>Query not found</h1>'
 ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
@@ -34,9 +35,11 @@ def Home(request):
 # Formats the list of authors with their metadata
 def __get_author_list(result):
 
+    author_results = result['_source']['metadata']['authors']
     author_list = []
-    if len(result['_source']['metadata']['authors'])>0:
-        for data in result['_source']['metadata']['authors']:
+
+    if isinstance(author_results, list) and len(author_results) > 0:
+        for data in author_results:
             author = dict()
 
             # Build the name for the author
@@ -256,7 +259,10 @@ def remove_punct(my_str):
     return no_punct
 
 def remove_stop(query):
-    with open('/data/CoronaSeer/seer/englishST.txt') as f:
+    CURRENT_DIRECTORY = os.path.realpath(os.path.dirname(__file__))
+    ENGLISH_ST_PATH = os.path.join(CURRENT_DIRECTORY, 'englishST.txt')
+
+    with open(ENGLISH_ST_PATH) as f:
         all_stopwords = f.readlines()
     # you may also want to remove whitespace characters like `\n` at the end of each line
     all_stopwords = [x.strip() for x in all_stopwords] 
@@ -279,12 +285,12 @@ def search(request, query, page):
     nquery = remove_punct(nquery)
     nquery = remove_stop(nquery)
     
-    print("Checking query in search:",nquery)
-    print("SOURCE:", source)
-    print("JOURNAL:", journal)
-    print("FULL TEXT:", full_text)
-    print("ABSTRACT:", abstract)
-    print("AUTHOR:", author)
+    # print("Checking query in search:",nquery)
+    # print("SOURCE:", source)
+    # print("JOURNAL:", journal)
+    # print("FULL TEXT:", full_text)
+    # print("ABSTRACT:", abstract)
+    # print("AUTHOR:", author)
 
     
     
@@ -334,14 +340,14 @@ def search(request, query, page):
     #print("RESULTS keys", res['hits']['total']['value'])
 
     if not res.get('hits') or len(res) == 0 or res['hits']['total']['value'] == 0:
-        return NotFound()
+        raise Http404("Search query yields no results")
     else:
-        print("search done")
+        # print("search done")
         totalresultsNumFound = res['hits']['total']['value']
         # hlresults=r.json()['highlighting']
         results = res['hits']['hits']
         aggregations = res['aggregations']
-        print('Got :',res['hits']['total']['value'])
+        # print('Got :',res['hits']['total']['value'])
         SearchResults = []
         if len(results) > 0:
             for result in results:
@@ -502,7 +508,7 @@ def search(request, query, page):
             return Response({"context": context})
 
         else:
-            return NotFound()
+            raise Http404("Search query yields no results")
 
 
 
@@ -571,10 +577,10 @@ def DocumentJson(request, document_id):
 
 @api_view(['GET'])
 def get_recommendations(request, similar_papers):
-    print("SIMILAR PAPERS:", similar_papers)
+    # print("SIMILAR PAPERS:", similar_papers)
     similar_papers = similar_papers.split(',')
 
-    print("SIMILAR PAPERS:", similar_papers)
+    # print("SIMILAR PAPERS:", similar_papers)
     body = {
         "query" : {
             "terms" : {
@@ -596,7 +602,7 @@ def get_recommendations(request, similar_papers):
             paper['title'] = result['_source']['metadata']['title']
             paper['abstract'] =  result['_source']['abstract']
             paper['author'] = [author['fullname'] for author in result['_source']['metadata']['authors']]
-            paper['pulication_year'] = result['_source']['publish_year']
+            paper['year'] = result['_source']['publish_year']
             paper['doi'] =  result['_source']['doi']
             paper['journal'] =  result['_source']['journal']
             recommendations.append(paper)
@@ -632,10 +638,10 @@ def get_recommendations(request, similar_papers):
             }
             }
         }
-        print(body)
+        # print(body)
         response = es.search(index=ELASTIC_INDEX, body=body)
         results = response['hits']['hits']
-        print("In search_in_filters: ",len(results))
+        # print("In search_in_filters: ",len(results))
 
         if len(results) == 0:
             raise Http404("No results available")
@@ -647,5 +653,5 @@ def get_recommendations(request, similar_papers):
                     break
             searchlist = list(set(searchlist))
             searchlist = searchlist[:10]
-            print("Searchresult:",searchlist)
+            # print("Searchresult:",searchlist)
         return HttpResponse(json.dumps({"searched":searchlist}, sort_keys=True, indent=4), content_type="application/json")
