@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'seer'
+    'seer',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -68,7 +69,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'covidseer.wsgi.application'
 
-
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://csxindex05:9200/'
+    }
+}
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
