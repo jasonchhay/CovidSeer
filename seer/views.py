@@ -4,14 +4,18 @@ from django import template
 from . import models
 from elasticsearch import Elasticsearch
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 import json
+import os
 
 ERR_QUERY_NOT_FOUND = '<h1>Query not found</h1>'
 ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
 
 # USER = open("elastic-settings.txt").read().split("\n")[1]
 # PASSWORD = open("elastic-settings.txt").read().split("\n")[2]
-ELASTIC_INDEX = 'cord_temp'
+ELASTIC_INDEX = 'cord_features'
 
 # open connection to Elastic
 es = Elasticsearch(['http://csxindex05:9200/'], verify_certs=True)
@@ -31,59 +35,62 @@ def Home(request):
 # Formats the list of authors with their metadata
 def __get_author_list(result):
 
+    author_results = result['_source']['metadata']['authors']
     author_list = []
 
-    for data in result['_source']['metadata']['authors']:
-        author = dict()
+    if isinstance(author_results, list) and len(author_results) > 0:
+        for data in author_results:
+            author = dict()
 
-        # Build the name for the author
-        first_name = data['first']
-        mid_name = data['middle']
+            # Build the name for the author
+            first_name = data['first']
+            mid_name = data['middle']
 
-        if len(mid_name) > 0:
-            first_name += " " + mid_name[0]
+            if len(mid_name) > 0:
+                first_name += " " + mid_name[0]
 
-        last_name = data['last']
-        suffix = data['suffix']
+            last_name = data['last']
+            # suffix = data['suffix']
+            suffix =''
 
-        author['name'] = ' '.join([first_name, last_name, suffix])
-
-        if suffix is None or suffix == '':
-            author['name'] = ' '.join([first_name, last_name])
-            #print(first_name)
-        else:
             author['name'] = ' '.join([first_name, last_name, suffix])
-            #print("SUFFIX:", suffix)
 
-        # Build the affiliation of the author
-        if len(data['affiliation']) > 0:
+            if suffix is None or suffix == '':
+                author['name'] = ' '.join([first_name, last_name])
+                #print(first_name)
+            else:
+                author['name'] = ' '.join([first_name, last_name, suffix])
+                #print("SUFFIX:", suffix)
 
-            # Build the geographic location of the author
-            if data['affiliation']['location']:
-                location = data['affiliation']['location']
+            # Build the affiliation of the author
+            if 'affiliation' in data and len(data['affiliation']) > 0:        
 
-                location_list = list()
+                # Build the geographic location of the author
+                if data['affiliation']['location']:
+                    location = data['affiliation']['location']
 
-                if 'settlement' in location:
-                    location_list.append(location['settlement'])
-                if 'region' in location:
-                    location_list.append(location['region'])
-                if 'country' in location:
-                    location_list.append(location['country'])
+                    location_list = list()
 
-                author['location'] = ", ".join(location_list)
+                    if 'settlement' in location:
+                        location_list.append(location['settlement'])
+                    if 'region' in location:
+                        location_list.append(location['region'])
+                    if 'country' in location:
+                        location_list.append(location['country'])
+
+                    author['location'] = ", ".join(location_list)
+                else:
+                    author['location'] = 'N/A'
+
+                author['institution'] = data['affiliation']['institution'] or 'N/A'
+                author['laboratory'] = data['affiliation']['laboratory'] or 'N/A'
             else:
                 author['location'] = 'N/A'
+                author['institution'] = 'N/A'
+                author['laboratory'] = 'N/A'
 
-            author['institution'] = data['affiliation']['institution'] or 'N/A'
-            author['laboratory'] = data['affiliation']['laboratory'] or 'N/A'
-        else:
-            author['location'] = 'N/A'
-            author['institution'] = 'N/A'
-            author['laboratory'] = 'N/A'
-
-        #print(author)
-        author_list.append(author)
+            #print(author)
+            author_list.append(author)
 
     return author_list
 
@@ -111,12 +118,12 @@ def aggs():
                 },
                 "uniq_years":{
                     "cardinality" : {
-                        "field" : "publish_year.keyword"
+                        "field" : "publish_year"
                     }
                 },
                 "year":{
                     "terms":{
-                        "field":"publish_year.keyword"
+                        "field":"publish_year"
                     }
                 },
                 "contains_abstract":{
@@ -153,10 +160,13 @@ def aggs():
     
     return agg_query
 
-def add_source_filters(template,filter_query,source):
+def add_source_filters(source):
     source = source.split(',')
-    source_filter = template
-
+    source_filter = {
+        "bool":{
+            "should":[]
+        }
+    }
     if len(source)>0:
         for x in source:
             source_filter['bool']['should'].append({
@@ -166,13 +176,16 @@ def add_source_filters(template,filter_query,source):
                         }
                     }
                 })
-        filter_query.append(source_filter)
-    return filter_query
+    return source_filter
 
 
-def add_journal_filters(template,filter_query,journal):
+def add_journal_filters(journal):
     journal = journal.split(',')
-    journal_filter = template
+    journal_filter = {
+        "bool":{
+            "should":[]
+        }
+    }
     if len(journal)>0:
         for x in journal:
             journal_filter['bool']['should'].append({
@@ -182,28 +195,34 @@ def add_journal_filters(template,filter_query,journal):
                         }
                     }
                 })
-        filter_query.append(journal_filter)
-    return filter_query
+    return journal_filter
 
 
-def add_year_filters(template,filter_query,year):
+def add_year_filters(year):
     year = year.split(',')
-    year_filter = template
+    year_filter = {
+        "bool":{
+            "should":[]
+        }
+    }
     if len(year)>0:
         for x in year:
             year_filter['bool']['should'].append({
                 "match_phrase": {
-                    "publish_year.keyword": {
+                    "publish_year": {
                       "query": x
                         }
                     }
                 })
-        filter_query.append(year_filter)
-    return filter_query
+    return year_filter
 
-def add_authors_filters(template,filter_query,author):
+def add_authors_filters(author):
     author = author.split(',')
-    author_filter = template
+    author_filter = {
+        "bool":{
+            "should":[]
+        }
+    }
     if len(author)>0:
         for x in author:
             author_filter['bool']['should'].append({
@@ -213,8 +232,17 @@ def add_authors_filters(template,filter_query,author):
                         }
                     }
                 })
-        filter_query.append(author_filter)
-    return filter_query
+    return author_filter
+
+def add_keyphrase_filters(keyphrase):
+    keyphrase_filter = {
+                    "multi_match": {
+                            "query": keyphrase,
+                            "fields":  ["body_text","abstract^2", "metadata.title^3"],
+                            "type": "cross_fields"
+                        }
+                     }                
+    return keyphrase_filter
 
 def remove_punct(my_str):
     punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
@@ -231,7 +259,10 @@ def remove_punct(my_str):
     return no_punct
 
 def remove_stop(query):
-    with open('/data/CoronaSeer/seer/englishST.txt') as f:
+    CURRENT_DIRECTORY = os.path.realpath(os.path.dirname(__file__))
+    ENGLISH_ST_PATH = os.path.join(CURRENT_DIRECTORY, 'englishST.txt')
+
+    with open(ENGLISH_ST_PATH) as f:
         all_stopwords = f.readlines()
     # you may also want to remove whitespace characters like `\n` at the end of each line
     all_stopwords = [x.strip() for x in all_stopwords] 
@@ -240,35 +271,32 @@ def remove_stop(query):
     query = ' '.join(query)
     return query
 
-def __search(request, query, page, source="",journal="",full_text="",abstract="",author="",year=""):
+@api_view(['GET'])
+def search(request, query, page):
     
+    source = request.GET.get('source') or ''
+    journal = request.GET.get('journal') or ''
+    full_text = request.GET.get('full_text') or ''
+    abstract = request.GET.get('abstract') or ''
+    author = request.GET.get('author') or ''
+    year = request.GET.get('year') or ''
+    keyphrase = request.GET.get('keyphrase') or ''
     nquery = query.lower()
     nquery = remove_punct(nquery)
     nquery = remove_stop(nquery)
     
-    print(nquery)
-    print("SOURCE:", source)
-    print("JOURNAL:", journal)
-    print("FULL TEXT:", full_text)
-    print("ABSTRACT:", abstract)
-    print("AUTHOR:", author)
+    # print("Checking query in search:",nquery)
+    # print("SOURCE:", source)
+    # print("JOURNAL:", journal)
+    # print("FULL TEXT:", full_text)
+    # print("ABSTRACT:", abstract)
+    # print("AUTHOR:", author)
 
-    template = {
-        "bool":{
-            "should":[]
-        }
-    }
-    filter_query =[]
-    if source:
-        filter_query = add_source_filters(template,filter_query,source)
-    if journal:
-        filter_query = add_journal_filters(template,filter_query,journal)
-    if year:
-        filter_query = add_year_filters(template,filter_query,year)
-    if author:
-        filter_query = add_authors_filters(template,filter_query,author)
+    
+    
     size = 15
     start = (page - 1) * size
+
     body = {
         "from": start,
         "size": size,
@@ -289,56 +317,71 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
         "aggs" : aggs(),
         'highlight': {'fields': {'body_text': {}, 'abstract.text': {}}}
     }
-    if len(filter_query)>0:
-        for each_filter in filter_query:
-            body['query']['bool']['must'].append(each_filter)
-        #body['query']['bool']['minimum_should_match'] = 1
-        body = body
+
+    if source:
+        body['query']['bool']['must'].append(add_source_filters(source))
+    if journal:
+        body['query']['bool']['must'].append([add_journal_filters(journal)])
+    if year:
+        body['query']['bool']['must'].append(add_year_filters(year))
+    if author:
+        body['query']['bool']['must'].append(add_authors_filters(author))
+    if keyphrase:
+        body['query']['bool']['filter'].append(add_keyphrase_filters(keyphrase))
+    
+    # if len(filter_query)>0:
+    #     for each_filter in filter_query:
+    #         body['query']['bool']['must'].append(each_filter)
+    #     #body['query']['bool']['minimum_should_match'] = 1
+    #     body = body
 
     res = es.search(index=ELASTIC_INDEX, body=body)
     #print("RESULTS", res)
     #print("RESULTS keys", res['hits']['total']['value'])
 
     if not res.get('hits') or len(res) == 0 or res['hits']['total']['value'] == 0:
-        return render(request, 'seer/results.html',
-                      {'q': query, 'errormessage': 'Your query returned zero results, please try another query.'})
+        raise Http404("Search query yields no results")
     else:
-        print("search done")
+        # print("search done")
         totalresultsNumFound = res['hits']['total']['value']
         # hlresults=r.json()['highlighting']
         results = res['hits']['hits']
         aggregations = res['aggregations']
-        print('Got :',res['hits']['total']['value'])
+        # print('Got :',res['hits']['total']['value'])
         SearchResults = []
         if len(results) > 0:
             for result in results:
                 resultid = result['_id']
-                f = models.SearchResult(resultid)  # calling the object class that is defined inside models.py
-                f.title = result['_source']['metadata']['title']
+                f = {'resultid' : resultid}  # calling the object class that is defined inside models.py
+                f['title'] = result['_source']['metadata']['title']
 
-                if len(f.title) == 0:
+                if len(f['title']) == 0:
                     continue
 
-                f.content = result['_source']['body_text']
+                f['content'] = result['_source']['body_text']
+                """
                 if len(result['_source']['metadata']['authors'])>0:
-                    if 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
-                        f.affiliation = result['_source']['metadata']['authors'][0]['affiliation']['location']
+                    if 'affiliation' in result['_source']['metadata']['authors'] and 'location' in result['_source']['metadata']['authors'][0]['affiliation']:
+                        f['affiliation'] = result['_source']['metadata']['authors'][0]['affiliation']['location']
                 else:
-                    f.affiliation = ''
+                    f['affiliation'] = ''
+                """
                 # rawpath= result['_source']['file']['url']
 
                 # removing local folder path
-                f.url = result['_source']['metadata']['title']
+                f['url'] = result['_source']['metadata']['title']
+                f['title'] = result['_source']['metadata']['title']
+                f['year'] = result['_source']['publish_year']
+                f['keyphrases'] = result['_source']['keyphrases']
 
-                f.title = result['_source']['metadata']['title']
-                f.authors = __get_author_list(result)
+                f['authors'] = __get_author_list(result)
 
                 # f.description = str(result['_source']['meta']['raw']['description'])
-                f.description = ''
+                f['description'] = ''
                 if 'highlight' in result:
                     if 'body_text' in result['highlight']:
                         for desc in result['highlight']['body_text']:
-                            f.description = f.description + desc + '\n'
+                            f['description'] = f['description'] + desc + '\n'
 
                 # f.description = " ".join(f.description).encode("utf-8")
                 '''
@@ -347,29 +390,92 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
                 '''
                 # trying to use the location field to get the file name to display the image
                 # f.filename= str(imageid)+'.png'
-                f.doi = result['_source']['doi']
-                f.source = result['_source']['source_x']
-
-                f.journal = result['_source']['journal']
-
-                if not f.journal:
-                    f.journal = 'N/A'
+                f['doi'] = result['_source']['doi']
+                f['source'] = result['_source']['source_x']
+                f['keyphrases'] = result['_source']['keyphrases']
+                f['journal'] = result['_source']['journal']
+                if not f['journal']:
+                    f['journal'] = 'N/A'
 
                 SearchResults.append(f)
                 
             context = dict()
             context['results'] = SearchResults
-            context['q'] = query
+
             # Adding aggregations
-            context['uniq_journals'] = aggregations['uniq_journals']['value']
-            context['uniq_sources'] = aggregations['uniq_sources']['value']
-            context['no_abstract'] =aggregations['contains_abstract']['buckets']['abs']['doc_count']
-            context['no_fulltext'] =aggregations['contains_abstract']['buckets']['fulltext']['doc_count']
-            context['uniq_authors'] = aggregations['first']['value']
-            context['uniq_years']  =aggregations['uniq_years']['value']
+            filters = {
+                'journal': {'displayName': 'Journal'},
+                'source': {'displayName': 'Source'},
+                'abstract': {'displayName': 'Abstract'},
+                'full_text': {'displayName': 'Full Text'},
+                'author': {'displayName': 'Author'},
+                'year': {'displayName': 'Year'}
+            }
+
+            filters['journal']['total'] = aggregations['uniq_journals']['value']
+            filters['source']['total'] = aggregations['uniq_sources']['value']
+            filters['author']['total'] = aggregations['first']['value']
+            filters['year']['total'] = aggregations['uniq_years']['value']
+            filters['abstract']['total'] = totalresultsNumFound
+            filters['full_text']['total'] = totalresultsNumFound
+
+            no_abstracts_count = aggregations['contains_abstract']['buckets']['abs']['doc_count']
+            no_fulltext_count = aggregations['contains_abstract']['buckets']['fulltext']['doc_count']
+
+            filters['abstract']['options'] = [
+                {'name': 'True', 'count': totalresultsNumFound - no_abstracts_count},
+                {'name': 'False', 'count': no_abstracts_count}
+            ]
             
-            context['abstract_available'] = totalresultsNumFound - context['no_abstract'] 
-            context['fulltext_available'] = totalresultsNumFound - context['no_fulltext']
+            filters['full_text']['options'] = [
+                {'name': 'True', 'count': totalresultsNumFound - no_fulltext_count},
+                {'name': 'False', 'count': no_fulltext_count}
+            ]
+
+            #Adding list of sources
+            total_sources = len(res['aggregations']['sources']['buckets'])
+            sources =[]
+            if (total_sources > 0):
+                for src in res['aggregations']['sources']['buckets']:
+                    if src['key'] =='':
+                        src['key']= "Unknown"
+                    sources.append({'name':src['key'],'count':src['doc_count']})
+            
+            #Adding list of journals
+            total_journals = len(res['aggregations']['journals']['buckets'])
+            jnls =[]
+            if (total_journals > 0):
+                for jnl in res['aggregations']['journals']['buckets']:
+                    if jnl['key'] =='':
+                        continue
+                    jnls.append({'name':jnl['key'],'count':jnl['doc_count']})                                
+            #Adding list of years
+            total_years = len(res['aggregations']['year']['buckets'])
+
+            yrs =[]
+            if (total_years > 0):
+                for yr in res['aggregations']['year']['buckets']:
+                    if yr['key'] =='':
+                        continue
+                    yrs.append({'name':yr['key'],'count':yr['doc_count']})
+
+            filters['source']['options'] = sources
+            filters['journal']['options'] = jnls
+            filters['year']['options'] =  yrs
+
+            #Adding authors to the list
+            auths =[]
+            fullname = res['aggregations']['full_name']['buckets']
+            for name in fullname:
+                if not name['key'].replace(' ', '').isalpha():
+                    continue
+                auths.append({'name':name['key'],'count':name['doc_count']})
+
+            filters['author']['options'] = auths
+            context['filters'] = filters
+            #print(context)
+            # return render(request, 'seer/results.html', context)
+
             context['total'] = totalresultsNumFound
             context['pageSize'] = size
             context['position'] = start + 1
@@ -398,70 +504,22 @@ def __search(request, query, page, source="",journal="",full_text="",abstract=""
 
             context['prevPageList'] = [i for i in range(context['prevPageLimit'], context['page'])]
             context['nextPageList'] = [i for i in range(context['page'] + 1, context['nextPageLimit'] + 1)]
-
-            #Adding list of sources
-            total_sources = len(res['aggregations']['sources']['buckets'])
-            sources =[]
-            if (total_sources > 0):
-                for src in res['aggregations']['sources']['buckets']:
-                    if src['key'] =='':
-                        src['key']= "Unknown"
-                    sources.append({'name':src['key'],'count':src['doc_count']})
             
-            #Adding list of journals
-            total_journals = len(res['aggregations']['journals']['buckets'])
-            jnls =[]
-            if (total_journals > 0):
-                for jnl in res['aggregations']['journals']['buckets']:
-                    if jnl['key'] =='':
-                        jnl['key']= "Unknown"
-                    jnls.append({'name':jnl['key'],'count':jnl['doc_count']})                                
-            #Adding list of years
-            total_years = len(res['aggregations']['year']['buckets'])
-            yrs =[]
-            if (total_years > 0):
-                for yr in res['aggregations']['year']['buckets']:
-                    if yr['key'] =='':
-                        yr['key']= "Unknown"
-                    yrs.append({'name':yr['key'],'count':yr['doc_count']})
-
-            context['sources'] = sources
-            context['journals'] = jnls
-            context['years'] =  yrs
-
-            #Adding authors to the list
-            auths =[]
-            fullname = res['aggregations']['full_name']['buckets']
-            for name in fullname:
-                auths.append({'name':name['key'],'count':name['doc_count']})
-
-            context['authors'] = auths
-            #print(context)
-            return render(request, 'seer/results.html', context)
-
-            
+            return Response({"context": context})
 
         else:
-            return (
-                request, 'seer/results.html',
-                {'q': 'query', 'errormessage': 'Your search returned zero results, please try another query.'})
-
+            raise Http404("Search query yields no results")
 
 
 
 def Query(request):
     if request.method == 'GET':
-        q = request.GET.get('query')
-        start = int(request.GET.get('page', 1))
-        
-        source = request.GET.get('source')
-        journal = request.GET.get('journal')
-        full_text = request.GET.get('full_text')
-        abstract = request.GET.get('abstract')
-        author = request.GET.get('author')
+        query = request.GET.get('query')
+        page = int(request.GET.get('page', 1)) or 1
 
-        if q is not None and len(q) > 1:
-            return __search(request, q, start, source, journal, full_text, abstract, author)
+        if query is not None and len(query) > 1:
+            # return __search(request, q, start, source, journal, full_text, abstract, author)
+            return render(request, 'seer/results.html', {'query': query, 'page': page})
         else:
             return render(request, 'seer/index.html', {})
 
@@ -493,6 +551,8 @@ def Document(request, document_id):
     context['json'] = json.dumps(result, separators=(',', ':'))
     context['source'] = result['_source']['source_x']
     context['journal'] = result['_source']['journal']
+    context['year'] = result['_source']['publish_year']
+    context['similar_papers'] = ','.join(result['_source']['similar_papers'])
 
     if not context['journal']:
         context['journal'] = 'N/A'
@@ -514,3 +574,84 @@ def DocumentJson(request, document_id):
         raise Http404("Document does not exist")
 
     return HttpResponse(json.dumps(results[0], sort_keys=True, indent=4), content_type="application/json")
+
+@api_view(['GET'])
+def get_recommendations(request, similar_papers):
+    # print("SIMILAR PAPERS:", similar_papers)
+    similar_papers = similar_papers.split(',')
+
+    # print("SIMILAR PAPERS:", similar_papers)
+    body = {
+        "query" : {
+            "terms" : {
+                "cord_uid" : similar_papers, #query is an array of similar papers like this ["krb1eidw","italbsed"],
+                "boost" : 1.0
+            }
+        }
+    }
+    res = es.search(index=ELASTIC_INDEX, body=body)
+    results = res['hits']['hits']
+
+    if len(results) == 0:
+        raise Http404("No similar papers available")
+    else:
+        recommendations=[]
+        for result in results:
+            paper = dict()
+            paper['doc_id'] = result['_id']
+            paper['title'] = result['_source']['metadata']['title']
+            paper['abstract'] =  result['_source']['abstract']
+            paper['author'] = [author['fullname'] for author in result['_source']['metadata']['authors']]
+            paper['year'] = result['_source']['publish_year']
+            paper['doi'] =  result['_source']['doi']
+            paper['journal'] =  result['_source']['journal']
+            recommendations.append(paper)
+    
+    return HttpResponse(json.dumps({"recom":recommendations}, sort_keys=True, indent=4), content_type="application/json")
+
+
+    """
+    Generic function to search within the list of filters.
+    Pass jrnl in query from frontend to search in journals and athr for authors
+    query:field to apply search on
+    tosearch: keyword to search
+    Usage: search_in_filters(request,"jrnl","Virology")
+    """
+    def search_in_filters(request,query,tosearch):
+        if query=='jrnl':
+            key_to_search = "journal"
+        elif query=='athr':
+            key_to_search ="metadata.authors.fullname"
+
+        body = {       
+            "_source": "",
+            "query":{
+                "query_string":{
+                    "default_field" : key_to_search, "query" : "*"+tosearch+"*"
+                }
+            },
+            "highlight": {
+            "pre_tags": [""], 
+            "post_tags": [""], 
+            "fields": {
+                key_to_search: {}
+            }
+            }
+        }
+        # print(body)
+        response = es.search(index=ELASTIC_INDEX, body=body)
+        results = response['hits']['hits']
+        # print("In search_in_filters: ",len(results))
+
+        if len(results) == 0:
+            raise Http404("No results available")
+        else:
+            searchlist = []
+            for result in results:
+                searchlist += result['highlight'][key_to_search]
+                if len(list(set(searchlist)))>=10:
+                    break
+            searchlist = list(set(searchlist))
+            searchlist = searchlist[:10]
+            # print("Searchresult:",searchlist)
+        return HttpResponse(json.dumps({"searched":searchlist}, sort_keys=True, indent=4), content_type="application/json")
