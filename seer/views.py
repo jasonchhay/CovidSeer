@@ -233,8 +233,6 @@ def add_authors_filters(author):
             if(x.count(' ') == 1):
                 x = x.replace(' ', '  ')
 
-            print(x)
-
             author_filter['bool']['should'].append({
                 "match_phrase": {
                     "metadata.authors.fullname.keyword": {

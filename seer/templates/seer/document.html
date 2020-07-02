@@ -91,16 +91,42 @@
 			</div>
 			<div class="row">
 				<div class="col-md-8">
-					<div style="width: 100%;"><h3>Abstract</h3></div>
-					<div><p>{{ abstract }}</p></div>
-					<div><h3>Body</h3></div>
-					<div id="doc-body"><p>{{ body }}</p></div>
+					<div class="section-header" style="width: 100%;"><h3>Abstract</h3></div>
+					<div>
+						<p>
+							{% if abstract %}
+								{{ abstract }}
+							{% else %}
+								<strong>No abstract text available.</strong>
+							{% endif %}
+						</p>
+					</div>
+					<div class="section-header"><h3>Body</h3></div>
+					<div id="doc-body">
+						<p>
+							{% if body %}
+								{{ body }}
+							{% else %}
+								<strong>No body text available.</strong>
+							{% endif %}
+						</p>
+					</div>
 					<a id="show-hide" role="button">Read more</a>
 				</div>
 				<div class="col-md-4">
-					<div style="width: 100%;"><h3>Similar Papers</h3></div>
-					
+					<div style="width: 100%;" class="section-header">
+						<h3>Similar Papers
+							</br>
+						</h3>
+					</div>
+
 					<div v-cloak>
+						<div class="row" style="margin-bottom: .5em;">
+							<div class="col-md-12">
+								<span class="similar-papers-subtext">(Suggestions are based off of abstract)</span>
+							</div>
+						</div>
+
 						<div class="row" v-if="loading" style="text-align: center;">
 							<div class="col-md-12">
 								<div class="spinner-border" role="status" style="margin-top: 1em;">

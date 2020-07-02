@@ -69,5 +69,5 @@ local_settings.py
 seer/static/.DS_Store
 seer/static/img/.DS_Store
 
-data
-static
+data/
+static/
