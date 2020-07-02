@@ -42,6 +42,7 @@ def __get_author_list(result):
         for data in author_results:
             author = dict()
 
+            """
             # Build the name for the author
             first_name = data['first']
             mid_name = data['middle']
@@ -61,6 +62,9 @@ def __get_author_list(result):
             else:
                 author['name'] = ' '.join([first_name, last_name, suffix])
                 #print("SUFFIX:", suffix)
+            """
+
+            author['name'] = data['fullname']
 
             # Build the affiliation of the author
             if 'affiliation' in data and len(data['affiliation']) > 0:        
@@ -228,6 +232,8 @@ def add_authors_filters(author):
         for x in author:
             if(x.count(' ') == 1):
                 x = x.replace(' ', '  ')
+
+            print(x)
 
             author_filter['bool']['should'].append({
                 "match_phrase": {

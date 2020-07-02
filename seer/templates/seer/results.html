@@ -381,20 +381,28 @@
 
 			addCustomFilter: function (key) {
 				var newFilter = this.customFiltersText[key];
+				this.customFiltersText[key] = "";
 
 				if (key === 'author' && newFilter.split(' ').length === 2) {
 					newFilter = newFilter.replace(" ", "  ");
 				}
 
-				this.customFiltersText[key] = "";
-				this.appliedCustomFilters[key].push(newFilter);
-				this.filterResults();
+				if(!this.isInFilter(key, newFilter)) {
+					this.appliedCustomFilters[key].push(newFilter);
+					this.filterResults();
+				}
 			},
 
 			addClickableFilter: function (key, value) {
-				this.appliedCustomFilters[key].push(value);
-				console.log(this.appliedCustomFilters);
-				this.filterResults();
+				if (key === 'author' && value.split(' ').length === 2) {
+					value = value.replace(" ", "  ");
+				}
+
+				if(!this.isInFilter(key, value)) {
+					this.appliedCustomFilters[key].push(value);
+					console.log(this.appliedCustomFilters);
+					this.filterResults();
+				}
 			},
 
 			removeCustomFilter: function (key, value) {
@@ -403,6 +411,10 @@
 
 			isFilterEmpty: function(key) {
 				return this.appliedFilters[key].length > 0 || this.appliedCustomFilters[key].length > 0;
+			},
+
+			isInFilter: function(key, value) {
+				return this.appliedCustomFilters[key].includes(value) || this.appliedFilters[key].includes(value)
 			}
 		},
 	})
