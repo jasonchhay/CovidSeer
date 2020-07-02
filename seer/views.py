@@ -223,8 +223,12 @@ def add_authors_filters(author):
             "should":[]
         }
     }
+
     if len(author)>0:
         for x in author:
+            if(x.count(' ') == 1):
+                x = x.replace(' ', '  ')
+
             author_filter['bool']['should'].append({
                 "match_phrase": {
                     "metadata.authors.fullname.keyword": {
@@ -232,6 +236,7 @@ def add_authors_filters(author):
                         }
                     }
                 })
+
     return author_filter
 
 def add_keyphrase_filters(keyphrase):
