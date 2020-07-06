@@ -8,6 +8,8 @@
 CovidSeer is a search engine which indexes the [CORD-19 Dataset](https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge/).
 
 Here are some details -
--   We have 29k full text papers indexed
+-   We have 50k full text papers indexed
 -   Papers will be linked to there PUBMed paper pages
 -   It has papers from biorxiv and medrxiv
+
+More details in this [paper](https://openreview.net/pdf?id=teATV3fPZb)
