@@ -655,3 +655,35 @@ def get_recommendations(request, similar_papers):
             searchlist = searchlist[:10]
             # print("Searchresult:",searchlist)
         return HttpResponse(json.dumps({"searched":searchlist}, sort_keys=True, indent=4), content_type="application/json")
+
+@api_view(['GET'])
+def get_autocomplete_suggestions(request,query):
+    body = {
+    "suggest": {
+        "search-suggest" : {
+            "prefix" : query, 
+            "completion" : { 
+                "field" : "metadata.title.keyword",
+                 "fuzzy" : {
+                    "fuzziness" : 2,
+                    "min_length": 5
+                }
+            }
+        }
+    },
+    "_source":["metadata.title"]
+}
+    res = es.search(index=ELASTIC_INDEX, body=body)
+    results = res['suggest']['search-suggest'][0]['options']
+
+    if len(results) == 0:
+        raise Http404("No suggestions available")
+    else:
+        suggestions=[]
+        for result in results:
+            suggest = dict()
+            suggest['text'] = result['text']
+            suggest['title'] = result['_source']['metadata']['title']
+            suggestions.append(suggest)
+    
+    return HttpResponse(json.dumps({"search_suggestions":suggestions}, sort_keys=True, indent=4), content_type="application/json")
