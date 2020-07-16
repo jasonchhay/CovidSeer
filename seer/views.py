@@ -15,7 +15,7 @@ ERR_IMG_NOT_AVAILABLE = 'The requested result can not be shown now'
 
 # USER = open("elastic-settings.txt").read().split("\n")[1]
 # PASSWORD = open("elastic-settings.txt").read().split("\n")[2]
-ELASTIC_INDEX = 'cord_final'
+ELASTIC_INDEX = 'cord_map'
 
 # open connection to Elastic
 es = Elasticsearch(['http://csxindex05:9200/'], verify_certs=True)
@@ -657,7 +657,8 @@ def get_recommendations(request, similar_papers):
         return HttpResponse(json.dumps({"searched":searchlist}, sort_keys=True, indent=4), content_type="application/json")
 
 @api_view(['GET'])
-def get_autocomplete_suggestions(request,query):
+def get_autocomplete_suggestions(request, query):
+
     body = {
     "suggest": {
         "search-suggest" : {

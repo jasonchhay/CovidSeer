@@ -11,6 +11,7 @@ urlpatterns = [
 
     # API
     path('api/search/<query>/<int:page>', views.search, name='api_search_index'),
+    path('api/search/autocomplete/<query>', views.get_autocomplete_suggestions, name='api_autocomplete'),
     path('api/doc/similar_papers/<similar_papers>', views.get_recommendations, name='api_get_recommendations'),
 
 
