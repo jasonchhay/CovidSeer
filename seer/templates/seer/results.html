@@ -12,15 +12,15 @@
             <a href="{% url 'home' %}">
                 <img src="{% static 'img/covidseer_logo.png' %}" alt="COVIDSeer Logo" height="80" />
             </a>
-            <form method="GET" action="{% url 'search' %}" autocomplete="off">
-                <div class="search-bar-wrapper">
-                    <div>
+
+            <form method="GET" action="{% url 'search' %}" class="search-form" autocomplete="off">
+                <div class="search-bar-wrapper input-group">
+                    <div style="width: 100%;">
                         <input type="text" name="query" id="search-box" class='form-control' value="{{ query }}" />
+                        <button type="submit" value="search" class="search-button btn">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
-                    <!-- <input type="hidden" name="type" id="q_type" value="Figures"/> -->
-                    <button type="submit" value="search" class="search-button btn">
-                        <i class="fas fa-search"></i>
-                    </button>
                 </div>
                 <br />
             </form>
@@ -216,7 +216,6 @@
 {% endblock %}
 
 {% block vuejs %}
-<script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'></script>
 <script src='https://unpkg.com/vue-router@2.0.0/dist/vue-router.js'></script>
 <script type='text/javascript'>
     const router = new VueRouter({
@@ -412,8 +411,4 @@
         },
     })
 </script>
-{% endblock %}
-
-{% block javascript %}
-<script src="{% static 'js/autocomplete.js' %}"></script>
 {% endblock %}

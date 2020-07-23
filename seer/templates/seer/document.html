@@ -2,38 +2,42 @@
 {% load static %}
 
 {% block css %}
-	<link rel="stylesheet" href="{% static 'css/document.css' %}">
-	<!--<link rel="stylesheet" href="{% static 'css/jsonview.css' %}">-->
+<link rel="stylesheet" href="{% static 'css/document.css' %}">
+<!--<link rel="stylesheet" href="{% static 'css/jsonview.css' %}">-->
 {% endblock %}
 
 {% block content %}
-	<div class="container" id="app">
-		<div class="document-container">
-			<div id="search-container">
-				<a href="{% url 'home' %}">
-					<img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo"  height="80"/>
-				</a>
-		        <form method="GET" action="{% url 'search' %}">
-			        <div class="search-bar-wrapper">
-				            <input type="text" name="query" id="search-box" class='form-control' value="{{ q }}"/>
-				            <!-- <input type="hidden" name="type" id="q_type" value="Figures"/> -->
-					        <button type="submit" value="Search" class="search-button btn">
-						        <i class="fas fa-search"></i>
-					        </button>
-			        </div>
-		        <br/>
-		        </form>
-			</div>
-			
-			<div class="row">
-				<div class="col-md-12">
-					<div style="width: 100%;"><a href="javascript:history.back()">Back to Results</a></div>
-					<div><h1 id="document-title">{{ title }} ({{year}})</h1></div>
-					<div class="author-container">
-						{% for author in authors %}
-							<div class="author">
-								<p>{{author.name}}</p>
-								<!--
+<div class="container" id="app">
+    <div class="document-container">
+        <div id="search-container">
+            <a href="{% url 'home' %}">
+                <img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo" height="80" />
+            </a>
+            <form method="GET" action="{% url 'search' %}" class="search-form" autocomplete="off">
+                <div class="search-bar-wrapper input-group">
+                    <div style="width: 100%;">
+                        <input type="text" name="query" id="search-box" class='form-control' value="{{ query }}" />
+                        <button type="submit" value="search" class="search-button btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <br />
+            </form>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div style="width: 100%;"><a href="javascript:history.back()">Back to Results</a></div>
+                <div>
+                    <h1 id="document-title">{{ title }} ({{year}})</h1>
+                </div>
+                <div class="author-container">
+                    {% for author in authors %}
+                    <div class="author">
+                        <p>{{author.name}}</p>
+                        <!--
 									<div class="author-content">
 										<h4>{{ author.name }}</h4>
 										<table>
@@ -52,25 +56,27 @@
 										</table>
 									</div>
 								-->
-							</div>{% if forloop.counter < authors|length %}, {% endif %}
-						{% endfor %}
-					</div>
-					<div class="journal row">
-						<div class="col-md-12"><b>Journal:</b> {{ journal }}</div>
-					</div>
-					<div class="source row">
-						<div class="col-md-12">
-							<b>Source:</b> {{ source }}
-						</div>
-					</div>
-					
-					<div class="row" id="btn-container">
-						<div class="col-md-12">
-							<a class="btn btn-primary" href="https://doi.org/{{ doi }}" target="_blank">View Full Article</a>
-							<a class="btn btn-grey" href="{% url 'document_json' document_id=docId %}" target="_blank">View as JSON</a>
-						</div>
-					</div>
-					<!--
+                    </div>{% if forloop.counter < authors|length %}, {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="journal row">
+                    <div class="col-md-12"><b>Journal:</b> {{ journal }}</div>
+                </div>
+                <div class="source row">
+                    <div class="col-md-12">
+                        <b>Source:</b> {{ source }}
+                    </div>
+                </div>
+
+                <div class="row" id="btn-container">
+                    <div class="col-md-12">
+                        <a class="btn btn-primary" href="https://doi.org/{{ doi }}" target="_blank">View Full
+                            Article</a>
+                        <a class="btn btn-grey" href="{% url 'document_json' document_id=docId %}" target="_blank">View
+                            as JSON</a>
+                    </div>
+                </div>
+                <!--
 					<div class="row">
 						<h3>Authors</h3>
 							<div class="author-container">
@@ -87,120 +93,130 @@
 							</div>
 					</div>
 					-->
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-8">
-					<div style="width: 100%;"><h3>Abstract</h3></div>
-					<div><p>{{ abstract }}</p></div>
-					<div><h3>Body</h3></div>
-					<div id="doc-body"><p>{{ body }}</p></div>
-					<a id="show-hide" role="button">Read more</a>
-				</div>
-				<div class="col-md-4">
-					<div style="width: 100%;"><h3>Similar Papers</h3></div>
-					
-					<div v-cloak>
-						<div class="row" v-if="loading" style="text-align: center;">
-							<div class="col-md-12">
-								<div class="spinner-border" role="status" style="margin-top: 1em;">
-									<span class="sr-only">Loading...</span>
-								</div>
-							</div>
-						</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div style="width: 100%;">
+                    <h3>Abstract</h3>
+                </div>
+                <div>
+                    <p>{{ abstract }}</p>
+                </div>
+                <div>
+                    <h3>Body</h3>
+                </div>
+                <div id="doc-body">
+                    <p>{{ body }}</p>
+                </div>
+                <a id="show-hide" role="button">Read more</a>
+            </div>
+            <div class="col-md-4">
+                <div style="width: 100%;">
+                    <h3>Similar Papers</h3>
+                </div>
 
-						<div class="row" v-else-if="similarPapersError">
-							<div class="col-md-12" style="padding-bottom: 5vh;">
-								<strong>
-									No similar papers found.
-								</strong>
-							</div>
-						</div>
+                <div v-cloak>
+                    <div class="row" v-if="loading" style="text-align: center;">
+                        <div class="col-md-12">
+                            <div class="spinner-border" role="status" style="margin-top: 1em;">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
 
-						<div v-else v-cloak>
-							<div>
-								<span v-for="paper in recommendations" key="paper.doi">
-									<p class="recommend-primary">
-										<a :href="getDocUrl(paper.doc_id)">
-											[[ paper.title ]] ([[ paper.year ]])
-										</a>
-									</p>
-									<p class="recommend-secondary">
-										[[ paper.author.join(', ') ]] - <span style="font-style:italic;">[[ paper.journal ]]</span>
-									</p>
-								</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <div class="row" v-else-if="similarPapersError">
+                        <div class="col-md-12" style="padding-bottom: 5vh;">
+                            <strong>
+                                No similar papers found.
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div v-else v-cloak>
+                        <div>
+                            <span v-for="paper in recommendations" key="paper.doi">
+                                <p class="recommend-primary">
+                                    <a :href="getDocUrl(paper.doc_id)">
+                                        [[ paper.title ]] ([[ paper.year ]])
+                                    </a>
+                                </p>
+                                <p class="recommend-secondary">
+                                    [[ paper.author.join(', ') ]] - <span style="font-style:italic;">[[ paper.journal
+                                        ]]</span>
+                                </p>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascript %}
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'></script>
-	<script src='https://unpkg.com/vue-router@2.0.0/dist/vue-router.js'></script>
-	<script type='text/javascript'>
-		const router = new VueRouter({
-			scrollBehavior (to, from, savedPosition) {
-				return { x: 0, y: 0 };
-			},
-			mode: 'history',
-		});
+<script src='https://unpkg.com/vue-router@2.0.0/dist/vue-router.js'></script>
+<script type='text/javascript'>
+    const router = new VueRouter({
+        scrollBehavior(to, from, savedPosition) {
+            return { x: 0, y: 0 };
+        },
+        mode: 'history',
+    });
 
-		const app =  new Vue({
-			router,
-			delimiters: ['[[', ']]'],
-			el: '#app',
+    const app = new Vue({
+        router,
+        delimiters: ['[[', ']]'],
+        el: '#app',
 
-			data: {
-				docId: "{{ docId }}",
-				similarPapers: "{{similar_papers}}",
-				recommendations: [],
-				carouselSize: 3,
-				loading: false,
-				similarPapersError: false
-			},
-			beforeMount() {
-				this.getSimilarDocuments();
-			},
-			methods: {				
-				getSimilarDocuments: function() {	
-					this.loading = true;					
-					axios	
-					.get(`/api/doc/similar_papers/${this.similarPapers}`)
-					.then(response => {	
-						if(response.request.status === 200) {
-							const data = response.data;	
-							this.recommendations = data.recom;
-							this.loading = false;
-							console.log(this.recommendations);
-						};
-					})
-					.catch(error => {
-						this.loading = false;
-						this.similarPapersError = true;
-					});
-				},
+        data: {
+            docId: "{{ docId }}",
+            similarPapers: "{{similar_papers}}",
+            recommendations: [],
+            carouselSize: 3,
+            loading: false,
+            similarPapersError: false
+        },
+        beforeMount() {
+            this.getSimilarDocuments();
+        },
+        methods: {
+            getSimilarDocuments: function () {
+                this.loading = true;
+                axios
+                    .get(`/api/doc/similar_papers/${this.similarPapers}`)
+                    .then(response => {
+                        if (response.request.status === 200) {
+                            const data = response.data;
+                            this.recommendations = data.recom;
+                            this.loading = false;
+                            console.log(this.recommendations);
+                        };
+                    })
+                    .catch(error => {
+                        this.loading = false;
+                        this.similarPapersError = true;
+                    });
+            },
 
-				getDocUrl: function(docId) {
-					return `{% url 'document' document_id=1 %}`.replace('1', docId);
-				},
+            getDocUrl: function (docId) {
+                return `{% url 'document' document_id=1 %}`.replace('1', docId);
+            },
 
-			},
-		});
-	</script>
-	<script>
-		var height = $('#doc-body')[0].scrollHeight;
-		var show = true;
-		
-		$('#show-hide').click(function(e) {
-		    e.stopPropagation();
-		    $('#doc-body').animate({
-		        'height': height
-		    });
-			$('#show-hide').hide();
-		});
-	</script>
+        },
+    });
+</script>
+<script>
+    var height = $('#doc-body')[0].scrollHeight;
+    var show = true;
+
+    $('#show-hide').click(function (e) {
+        e.stopPropagation();
+        $('#doc-body').animate({
+            'height': height
+        });
+        $('#show-hide').hide();
+    });
+</script>
 {% endblock %}

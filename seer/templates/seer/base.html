@@ -2,91 +2,102 @@
 
 <!DOCTYPE html PUBLIC "//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
+
 <head>
-	<meta charset="UTF-8">
-	<meta name="keywords" content="COVID-19, coronavirus, research, search engine, academic, virus">
+    <meta charset="UTF-8">
+    <meta name="keywords" content="COVID-19, coronavirus, research, search engine, academic, virus">
     <meta name="viewport" content="width=device-width">
 
-	<title>COVIDSeer</title>
-	<meta prefix="og: http://ogp.me/ns#" property="og:type" content="website">
-	<meta prefix="og: http://ogp.me/ns#" property="og:title" content="COVIDSeer">
-	<meta prefix="og: http://ogp.me/ns#" property="og:description" content="COVID-19 Open Research Search Engine hosted by Penn State">
-	<meta prefix="og: http://ogp.me/ns#" property="og:image" content="{% static 'img/covidseer_logo.png' %}">
-	<meta prefix="og: http://ogp.me/ns#" property="og:url" content="https://covidseer.ist.psu.edu/">
+    <title>COVIDSeer</title>
+    <meta prefix="og: http://ogp.me/ns#" property="og:type" content="website">
+    <meta prefix="og: http://ogp.me/ns#" property="og:title" content="COVIDSeer">
+    <meta prefix="og: http://ogp.me/ns#" property="og:description"
+        content="COVID-19 Open Research Search Engine hosted by Penn State">
+    <meta prefix="og: http://ogp.me/ns#" property="og:image" content="{% static 'img/covidseer_logo.png' %}">
+    <meta prefix="og: http://ogp.me/ns#" property="og:url" content="https://covidseer.ist.psu.edu/">
 
-	<link rel='icon' href="{% static 'img/favicon.ico' %}" type='image/x-icon'/>
+    <link rel='icon' href="{% static 'img/favicon.ico' %}" type='image/x-icon' />
 
-	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-	<link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.min.css' %}">
-	<link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap-grid.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap-grid.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/mdb/mdb.lite.css' %}">
-	<link rel="stylesheet" href="{% static 'css/fontawesome-all.css' %}">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-	{% block css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    {% block css %}{% endblock %}
 </head>
 
-	<div class="header">
-		<a href="{% url 'home' %}">
-			Home
-		</a>
-	  <div class="header-right">
-	    <a href="https://csxstatic.ist.psu.edu/home" target="_blank">About</a>
-	    <a  href="https://csxstatic.ist.psu.edu/people/team" target="_blank">Team</a>
-	    <a href="https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge" target="_blank">Data</a>
-	    <a href="https://csxstatic.ist.psu.edu/contact/" target="_blank">Contact</a>
-	  </div>
-	</div>
-	<body>
-    	<div class="container-fluid">
-			<div class="row">
-				<div class="content col-lg-11">
-					{% block content %}{% endblock %}
-				</div>
-			</div>
-	    </div>
-	</body>
-	<footer class="footer-distributed">
-	            <div class="footer-left">
-	                <img id="psu_logo" src="{% static 'img/psu_logo.png' %}" width="400vw">
-		            <div class="elasticsearch">
-			            <a href="https://www.elastic.co/enterprise-search">
-				            <img src="{% static 'img/svg/logo-elasticsearch-64-color-reverse.svg' %}" width="50vw" style="display: inline-block;">
-				            <p style="color: white; display: inline-block;">Powered by ElasticSearch</p>
-			            </a>
-		            </div>
-		            <p class="footer-links">
-	                    <a href="https://csxstatic.ist.psu.edu/privacy-policy/">Privacy Policy</a>
-	                    ·
-	                    <a href="https://csxstatic.ist.psu.edu/help/">Help</a>
-	                    ·
-	                    <a href="https://csxstatic.ist.psu.edu/contact/">Contact Us</a>
-	                </p>
-	                <p class="footer-company-name">Developed at and hosted by <a href="http://ist.psu.edu/">The College of Information Sciences and Technology</a></p><br>
-	                <p class="footer-company-name"><a href="https://www.psu.edu/">Pennsylvania State University</a> © 2007-2016</p>
-	            </div>
-	            <div class="footer-center">
-	                <div>
-			    <div>
-	                        <i class="fa fa-map-marker"></i>
-	                        <p><span>Westgate Building</span>
-				   Pennsylvania State University
-				   <br>University Park, PA 16802
-				</p>
-			    </div>
-	                    <div>
-	                        <i class="fa fa-phone"></i>
-	                        <p>+(814) 865 7884</p>
-	                    </div>
-	                </div>
-	        </div>
-	</footer>
-	<script src="{% static 'js/jquery.js' %}"></script>
-	{% block vuejs %}{% endblock %}
-	<script src="https://kit.fontawesome.com/e80c85a2cc.js" crossorigin="anonymous"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/mdb.js' %}"></script>
-    {% block javascript %}{% endblock %}
+<div class="header">
+    <a href="{% url 'home' %}">
+        Home
+    </a>
+    <div class="header-right">
+        <a href="https://csxstatic.ist.psu.edu/home" target="_blank">About</a>
+        <a href="https://csxstatic.ist.psu.edu/people/team" target="_blank">Team</a>
+        <a href="https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge" target="_blank">Data</a>
+        <a href="https://csxstatic.ist.psu.edu/contact/" target="_blank">Contact</a>
+    </div>
+</div>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="content col-lg-11">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+<footer class="footer-distributed">
+    <div class="footer-left">
+        <img id="psu_logo" src="{% static 'img/psu_logo.png' %}" width="400vw">
+        <div class="elasticsearch">
+            <a href="https://www.elastic.co/enterprise-search">
+                <img src="{% static 'img/svg/logo-elasticsearch-64-color-reverse.svg' %}" width="50vw"
+                    style="display: inline-block;">
+                <p style="color: white; display: inline-block;">Powered by ElasticSearch</p>
+            </a>
+        </div>
+        <p class="footer-links">
+            <a href="https://csxstatic.ist.psu.edu/privacy-policy/">Privacy Policy</a>
+            ·
+            <a href="https://csxstatic.ist.psu.edu/help/">Help</a>
+            ·
+            <a href="https://csxstatic.ist.psu.edu/contact/">Contact Us</a>
+        </p>
+        <p class="footer-company-name">Developed at and hosted by <a href="http://ist.psu.edu/">The College of
+                Information Sciences and Technology</a></p><br>
+        <p class="footer-company-name"><a href="https://www.psu.edu/">Pennsylvania State University</a> © 2007-2016</p>
+    </div>
+    <div class="footer-center">
+        <div>
+            <div>
+                <i class="fa fa-map-marker"></i>
+                <p><span>Westgate Building</span>
+                    Pennsylvania State University
+                    <br>University Park, PA 16802
+                </p>
+            </div>
+            <div>
+                <i class="fa fa-phone"></i>
+                <p>+(814) 865 7884</p>
+            </div>
+        </div>
+    </div>
+</footer>
+<script src="{% static 'js/jquery.js' %}"></script>
+{% block vuejs %}{% endblock %}
+<script src="https://kit.fontawesome.com/e80c85a2cc.js" crossorigin="anonymous"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/mdb.js' %}"></script>
+<script src="{% static 'js/autocomplete.js' %}"></script>
+
+{% block javascript %}{% endblock %}
+
 </html>

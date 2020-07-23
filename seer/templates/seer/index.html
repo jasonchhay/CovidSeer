@@ -2,45 +2,48 @@
 {% load static %}
 
 {% block content %}
-	{% if errormessage %}
-    <div id="navwrapper">
-        <span style="color:white; font-size:20pt;"><b>{{ errormessage }}</b></span>
+{% if errormessage %}
+<div id="navwrapper">
+    <span style="color:white; font-size:20pt;"><b>{{ errormessage }}</b></span>
+</div>
+{% endif %}
+<div class="search-container col-md-7">
+    <div id="homepage-logo">
+        <img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo" />
     </div>
-    {% endif %}
-    <div class="search-container col-md-7">
-        <div id="homepage-logo">
-            <img src="{% static "img/covidseer_logo.png" %}" alt="CoronaSeer Logo"/>
-        </div>
-        <div style="padding-bottom:5vh;">
-            <form class="search-form" method="GET" action="{% url 'search' %}">
-                <div class="search-bar-wrapper">
-                        <input type="text" name="query" id="search-box" class='form-control' value="{{ q }}"/>
-                        <!-- <input type="hidden" name="type" id="q_type" value="Figures"/> -->
-                        <button type="submit" value="Search" class="search-button btn">
-                            <i class="fas fa-search"></i>
-                        </button>
+    <div style="padding-bottom:5vh;">
+        <form method="GET" action="{% url 'search' %}" class="search-form" autocomplete="off">
+            <div class="search-bar-wrapper input-group">
+                <div style="width: 100%;">
+                    <input type="text" name="query" id="search-box" class='form-control' value="{{ query }}" />
+                    <button type="submit" value="search" class="search-button btn">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
-                <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Search from biorxiv, medrxiv, PUBMed and more . . . </b></span>
-            </form>
-            <a href="https://pages.semanticscholar.org/coronavirus-research">About the data</a>
-        </div>
-        <div class="support">
-            <h5>Support</h5>
-            <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=0958143" target="_blank">
-                <img src="{% static 'img/nsf_logo.gif' %}" style="width: 100px;" />
-            </a>
-            <a href="https://www.darpa.mil/" target="_blank">
-                <img src="{% static 'img/darpa_logo.png' %}" style="width: 100px;" />
-            </a>
-        </div>
+            </div>
+            <br />
+        </form>
+        <span style="color:#666666; font-size:14px; font-family:Arial, Helvetica, sans-serif;"><b>Search from
+                biorxiv, medrxiv, PUBMed and more . . . </b></span>
+        <a href="https://pages.semanticscholar.org/coronavirus-research">About the data</a>
     </div>
+    <div class="support">
+        <h5>Support</h5>
+        <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=0958143" target="_blank">
+            <img src="{% static 'img/nsf_logo.gif' %}" style="width: 100px;" />
+        </a>
+        <a href="https://www.darpa.mil/" target="_blank">
+            <img src="{% static 'img/darpa_logo.png' %}" style="width: 100px;" />
+        </a>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascript %}
-    <script type="text/javascript">
-        function loadURL() {
-            let query = document.getElementById("search-box").value;
-            return "{% url 'search' %}?query=" + query;
-        }
-    </script>
+<script type="text/javascript">
+    function loadURL() {
+        let query = document.getElementById("search-box").value;
+        return "{% url 'search' %}?query=" + query;
+    }
+</script>
 {% endblock %}
